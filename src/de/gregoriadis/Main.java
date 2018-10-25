@@ -1,6 +1,7 @@
 package de.gregoriadis;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -82,6 +83,15 @@ public class Main extends Application {
             Document document = scraper.getDocumentFromURL(baseURL);
 
             Elements downloads = document.select(".content h2 a");
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    getMainController().setSyncInfo("0/" + downloads.size());
+                }
+            });
+
+            int i = 0;
             for (Element download : downloads) {
                 String name = download.parent().ownText();
                 name = name.substring(8, name.length() - 2);
@@ -103,9 +113,17 @@ public class Main extends Application {
                     e.printStackTrace();
                 }
 
-                // Delete final
+                // Delete file
                 (new File(tempZipFile)).delete();
                 LOGGER.info("Temp zip file deleted");
+
+                final int finalI = i++;
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        getMainController().setSyncInfo(finalI + "/" + downloads.size());
+                    }
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,6 +140,10 @@ public class Main extends Application {
 
     public static LoginController getLoginController() {
         return loginController;
+    }
+
+    public static MainController getMainController() {
+        return mainController;
     }
 
     public static Stage getPrimaryStage() {

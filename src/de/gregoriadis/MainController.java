@@ -1,5 +1,6 @@
 package de.gregoriadis;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -24,6 +25,9 @@ public class MainController {
     private Button syncBtn;
 
     @FXML
+    private Label syncInfoLabel;
+
+    @FXML
     protected void initialize() {
         directoryTextField.setText(Config.getInstance().getDirectory());
         chooseDirectoryBtn.setOnMouseClicked(t -> {
@@ -38,8 +42,30 @@ public class MainController {
         });
 
         syncBtn.setOnMouseClicked(t -> {
-            Main.downloadEverything();
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    Main.downloadEverything();
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    System.out.println("succeeded");
+                }
+
+                @Override
+                protected void failed() {
+                    super.failed();
+                    System.out.println("failed");
+                }
+            };
+            new Thread(task).start();
         });
+    }
+
+    protected void setSyncInfo(String text) {
+        syncInfoLabel.setText(text);
     }
 
 }

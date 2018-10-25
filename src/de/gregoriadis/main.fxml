@@ -26,7 +26,12 @@
                   <Button fx:id="chooseDirectoryBtn" mnemonicParsing="false" text="Durchsuchen..." />
                </children>
             </HBox>
-            <Button fx:id="syncBtn" mnemonicParsing="false" text="Synchronisieren" />
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="syncBtn" mnemonicParsing="false" text="Synchronisieren" />
+                  <Label fx:id="syncInfoLabel" text="0/0" />
+               </children>
+            </HBox>
          </children>
       </VBox>
    </children>
