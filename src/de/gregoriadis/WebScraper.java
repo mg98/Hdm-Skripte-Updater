@@ -8,6 +8,9 @@ import java.io.*;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.net.UnknownHostException;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.Base64;
 import java.util.HashMap;
 
@@ -19,11 +22,11 @@ public class WebScraper {
 
 
     public WebScraper() {
-        this.base64login = new String(Base64.getEncoder().encode((Login.getUsername() + ":" + Login.getPassword()).getBytes()));
+        this.base64login = new String(Base64.getEncoder().encode((Config.getInstance().getUsername() + ":" + Config.getInstance().getPassword()).getBytes()));
 
         Authenticator.setDefault(new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(Login.getUsername(), Login.getPassword().toCharArray());
+                return new PasswordAuthentication(Config.getInstance().getUsername(), Config.getInstance().getPassword().toCharArray());
             }
         });
     }
@@ -51,6 +54,9 @@ public class WebScraper {
                     Main.getLoginController().setStatusMessage("HTTP " + e.getStatusCode());
             }
         }
+        catch (UnknownHostException e) {
+            Main.getLoginController().setStatusMessage("Could not establish connection with hdm website. Check your internet connection!");
+        }
         catch (IOException e) {
             Main.getLoginController().setStatusMessage("Dokument konnte nicht gefetcht werden.");
             e.printStackTrace();
@@ -61,18 +67,10 @@ public class WebScraper {
 
     public void download(String url, String location) {
         try {
-            InputStream in = (new URL(url)).openStream();
-            OutputStream out = new BufferedOutputStream(new FileOutputStream(location));
-
-            final int BUFFER_SIZE = 1024 * 4;
-            byte[] buffer = new byte[BUFFER_SIZE];
-            BufferedInputStream bis = new BufferedInputStream(in);
-            int length;
-            while ((length = bis.read(buffer)) > 0) {
-                out.write(buffer, 0, length);
-            }
-            out.close();
-            in.close();
+            URL website = new URL(url);
+            ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+            FileOutputStream fos = new FileOutputStream(location);
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
         } catch (Exception e) {
             e.printStackTrace();
         }

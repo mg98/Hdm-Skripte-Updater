@@ -12,6 +12,8 @@ import java.io.File;
 
 public class MainController {
 
+    public final static String filesRootDirectory = System.getProperty("user.home");
+
     @FXML
     private TextField directoryTextField;
 
@@ -19,13 +21,24 @@ public class MainController {
     private Button chooseDirectoryBtn;
 
     @FXML
+    private Button syncBtn;
+
+    @FXML
     protected void initialize() {
+        directoryTextField.setText(Config.getInstance().getDirectory());
         chooseDirectoryBtn.setOnMouseClicked(t -> {
             DirectoryChooser chooser = new DirectoryChooser();
-            File defaultDirectory = new File(System.getProperty("user.home"));
+            File defaultDirectory = new File(filesRootDirectory);
             chooser.setInitialDirectory(defaultDirectory);
             File selectedDirectory = chooser.showDialog(Main.getPrimaryStage());
             directoryTextField.setText(selectedDirectory.getAbsolutePath());
+
+            Config.getInstance().setDirectory(selectedDirectory.getAbsolutePath());
+            Config.getInstance().save();
+        });
+
+        syncBtn.setOnMouseClicked(t -> {
+            Main.downloadEverything();
         });
     }
 

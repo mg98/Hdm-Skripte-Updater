@@ -23,8 +23,8 @@ public class LoginController {
 
     @FXML
     protected void initialize() {
-        usernameTextField.setText(Login.getUsername());
-        passwordField.setText(Login.getPassword());
+        usernameTextField.setText(Config.getInstance().getUsername());
+        passwordField.setText(Config.getInstance().getPassword());
 
         loginBtn.setOnMouseClicked(t -> {
             Main.saveLogin(usernameTextField.getText(), passwordField.getText());
@@ -32,7 +32,7 @@ public class LoginController {
             WebScraper.getInstance().clearCache();
             Document doc = WebScraper.getInstance().getDocumentFromURL(Main.baseURL);
             if (doc != null) {
-                setStatusMessage("Anmeldung erfolgreich.");
+                Main.switchToMainGui();
             }
         });
     }

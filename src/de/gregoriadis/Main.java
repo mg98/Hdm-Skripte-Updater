@@ -8,9 +8,10 @@ import javafx.stage.Stage;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,7 +19,6 @@ import java.util.logging.Logger;
 
 public class Main extends Application {
 
-    private static final Path loginFilePath = Paths.get(System.getProperty("user.home") + "/.hdmskripteupdater/login");
     public static final String baseURL = "https://www.hdm-stuttgart.de/studierende/stundenplan/pers_stundenplan/skripte/";
     private static LoginController loginController;
     private static MainController mainController;
@@ -41,61 +41,52 @@ public class Main extends Application {
         Document doc = WebScraper.getInstance().getDocumentFromURL(Main.baseURL);
         if (doc == null) {
             LOGGER.info("Could not login with configured credentials");
+            primaryStage.setScene(scene);
         } else {
             // Successful login
-            LOGGER.info("Login successfull");
-            scene = getMainGui();
+            LOGGER.info("Config successfull");
+            switchToMainGui();
         }
 
-        primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private Scene getMainGui() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("main.fxml"));
-        Parent root = loader.load();
-        mainController = loader.getController();
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/de/gregoriadis/gui.css");
-
-        return scene;
+    public static void switchToMainGui() {
+        try {
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("main.fxml"));
+            Parent root = loader.load();
+            mainController = loader.getController();
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/de/gregoriadis/gui.css");
+            primaryStage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    public static void main(String[] args) throws IOException {
-        try {
-            Files.createDirectories(loginFilePath.getParent());
-            Files.createFile(loginFilePath);
-            LOGGER.info("Login file created in " + loginFilePath.toString());
-        } catch (FileAlreadyExistsException e) {
-            LOGGER.info("Login file exists");
-        }
-
-        // Setting username and password from file
-        String loginFile = new String(Files.readAllBytes(loginFilePath));
-        String[] loginFileParts = loginFile.split(":");
-        Login.setUsername(loginFileParts[0]);
-        Login.setPassword(loginFileParts[1]);
-        LOGGER.info("Using username: " + Login.getUsername() + ", pass: " + Login.getPassword());
-
+    public static void main(String[] args) {
         launch(args);
     }
 
-    public static void downloadZips() {
+    public static void downloadEverything() {
         final WebScraper scraper = WebScraper.getInstance();
 
         try {
+            String tempDir = System.getProperty("user.home") + "/.hdmskripteupdater/tmp";
+            (new File(tempDir)).mkdir();
+
             Document document = scraper.getDocumentFromURL(baseURL);
 
             Elements downloads = document.select(".content h2 a");
+            int i = 0;
             for (Element download : downloads) {
                 scraper.download(
                         baseURL + download.attr("href"),
-                        System.getProperty("user.home") + "/Downloads/download.zip"
+                        tempDir + "/skripte" + i++ + ".zip"
                 );
 
-                System.out.println(download.attr("href"));
-                break;
+                LOGGER.info("Downloading " + download.attr("href"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,14 +96,9 @@ public class Main extends Application {
     public static void saveLogin(String username, String password) {
         System.out.println("save login " + username + " " + password);
 
-        Login.setUsername(username);
-        Login.setPassword(password);
-
-        try {
-            Files.write(loginFilePath, (username + ":" + password).getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Config.getInstance().setUsername(username);
+        Config.getInstance().setPassword(password);
+        Config.getInstance().save();
     }
 
     public static LoginController getLoginController() {
@@ -121,6 +107,10 @@ public class Main extends Application {
 
     public static Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    public static Logger getLogger() {
+        return LOGGER;
     }
 
 }
