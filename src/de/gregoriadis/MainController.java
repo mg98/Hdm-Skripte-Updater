@@ -28,7 +28,7 @@ public class MainController {
         directoryTextField.setText(Config.getInstance().getDirectory());
         chooseDirectoryBtn.setOnMouseClicked(t -> {
             DirectoryChooser chooser = new DirectoryChooser();
-            File defaultDirectory = new File(filesRootDirectory);
+            File defaultDirectory = new File(Config.getInstance().getDirectory());
             chooser.setInitialDirectory(defaultDirectory);
             File selectedDirectory = chooser.showDialog(Main.getPrimaryStage());
             directoryTextField.setText(selectedDirectory.getAbsolutePath());

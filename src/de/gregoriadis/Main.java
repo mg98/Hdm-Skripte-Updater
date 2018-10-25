@@ -9,6 +9,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.apache.commons.io.FileUtils;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.core.ZipFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,19 +76,36 @@ public class Main extends Application {
 
         try {
             String tempDir = System.getProperty("user.home") + "/.hdmskripteupdater/tmp";
+            FileUtils.deleteDirectory(new File(tempDir));
             (new File(tempDir)).mkdir();
 
             Document document = scraper.getDocumentFromURL(baseURL);
 
             Elements downloads = document.select(".content h2 a");
-            int i = 0;
             for (Element download : downloads) {
+                String name = download.parent().ownText();
+                name = name.substring(8, name.length() - 2);
+
+                // Download zip
+                String tempZipFile = tempDir + "/" + name + ".zip";
+                LOGGER.info("Downloading from " + baseURL + download.attr("href"));
                 scraper.download(
                         baseURL + download.attr("href"),
-                        tempDir + "/skripte" + i++ + ".zip"
+                        tempZipFile
                 );
 
-                LOGGER.info("Downloading " + download.attr("href"));
+                // Extract file
+                LOGGER.info("Extracting file to set destination");
+                try {
+                    ZipFile zipFile = new ZipFile(tempZipFile);
+                    zipFile.extractAll(Config.getInstance().getDirectory() + "/" + name);
+                } catch (ZipException e) {
+                    e.printStackTrace();
+                }
+
+                // Delete final
+                (new File(tempZipFile)).delete();
+                LOGGER.info("Temp zip file deleted");
             }
         } catch (Exception e) {
             e.printStackTrace();
