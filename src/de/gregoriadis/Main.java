@@ -89,7 +89,7 @@ public class Main extends Application {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    getMainController().setSyncInfo("0/" + downloads.size());
+                    getMainController().setSyncInfo("0/" + (downloads.size() - 1));
                 }
             });
 
@@ -123,7 +123,7 @@ public class Main extends Application {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        getMainController().setSyncInfo(finalI + "/" + downloads.size());
+                        getMainController().setSyncInfo(finalI + "/" + (downloads.size() - 1));
                     }
                 });
             }
