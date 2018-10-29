@@ -16,9 +16,6 @@ import net.lingala.zip4j.core.ZipFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 public class Main extends Application {
@@ -35,7 +32,7 @@ public class Main extends Application {
         primaryStage.setTitle("HdM Skripte Updater");
 
         // Setup login gui
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
         Parent root = loader.load();
         loginController = loader.getController();
         Scene scene = new Scene(root);
@@ -59,7 +56,7 @@ public class Main extends Application {
 
     public static void switchToMainGui() {
         try {
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource("main.fxml"));
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("/fxml/main.fxml"));
             Parent root = loader.load();
             mainController = loader.getController();
             Scene scene = new Scene(root);

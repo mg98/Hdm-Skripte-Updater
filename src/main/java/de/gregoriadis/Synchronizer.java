@@ -34,7 +34,7 @@ public class Synchronizer {
             FileUtils.deleteDirectory(new File(tempDir));
             (new File(tempDir)).mkdir();
 
-            Document document = scraper.getDocumentFromURL(Main.baseURL);
+            Document document = WebScraper.getInstance().getDocumentFromURL(Main.baseURL);
 
             Elements downloads = document.select(".content h2 a");
 
@@ -45,7 +45,7 @@ public class Synchronizer {
                 // Download zip
                 String tempZipFile = tempDir + "/" + name + ".zip";
                 Main.getLogger().info("Downloading from " + Main.baseURL + download.attr("href"));
-                scraper.download(
+                WebScraper.getInstance().download(
                         Main.baseURL + download.attr("href"),
                         tempZipFile
                 );
