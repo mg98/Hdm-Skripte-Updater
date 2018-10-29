@@ -4,6 +4,9 @@ import javafx.application.Platform;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -12,11 +15,16 @@ import java.io.File;
 
 public class Synchronizer {
 
-    private final WebScraper scraper = WebScraper.getInstance();
+    private final static String tempDir = System.getProperty("user.home") + "/.hdmskripteupdater/tmp";
 
     public void sync() {
 
 
+
+    }
+
+    public static String getTempDir() {
+        return tempDir;
     }
 
     public void downloadEverything() {

@@ -1,5 +1,6 @@
 package de.gregoriadis;
 
+import de.gregoriadis.scriptspage.IhreSkripte;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -67,6 +68,7 @@ public class Main extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        new IhreSkripte();
     }
 
 
