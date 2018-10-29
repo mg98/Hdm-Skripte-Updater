@@ -41,7 +41,7 @@ public class Main extends Application {
         scene.getStylesheets().add("/de/gregoriadis/gui.css");
 
         primaryStage.setScene(scene);
-        if (firstStartup()) {
+        if (!Config.getInstance().getUsername().equals("")) {
             // Try to login
             Document doc = WebScraper.getInstance().getDocumentFromURL(Main.baseURL);
             if (doc == null) {
@@ -52,7 +52,6 @@ public class Main extends Application {
                 switchToMainGui();
             }
         }
-
 
         primaryStage.show();
     }
