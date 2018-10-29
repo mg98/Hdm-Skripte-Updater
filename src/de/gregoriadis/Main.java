@@ -40,16 +40,19 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         scene.getStylesheets().add("/de/gregoriadis/gui.css");
 
-        // Try to login
-        Document doc = WebScraper.getInstance().getDocumentFromURL(Main.baseURL);
-        if (doc == null) {
-            LOGGER.info("Could not login with configured credentials");
-            primaryStage.setScene(scene);
-        } else {
-            // Successful login
-            LOGGER.info("Config successfull");
-            switchToMainGui();
+        primaryStage.setScene(scene);
+        if (firstStartup()) {
+            // Try to login
+            Document doc = WebScraper.getInstance().getDocumentFromURL(Main.baseURL);
+            if (doc == null) {
+                LOGGER.info("Could not login with configured credentials");
+            } else {
+                // Successful login
+                LOGGER.info("Config successfull");
+                switchToMainGui();
+            }
         }
+
 
         primaryStage.show();
     }
@@ -136,6 +139,10 @@ public class Main extends Application {
         Config.getInstance().setUsername(username);
         Config.getInstance().setPassword(password);
         Config.getInstance().save();
+    }
+
+    public static boolean firstStartup() {
+        return !Config.fileExists();
     }
 
     public static LoginController getLoginController() {

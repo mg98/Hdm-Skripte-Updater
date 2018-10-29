@@ -101,4 +101,9 @@ public class Config {
         return instance;
     }
 
+    public static boolean fileExists() {
+        File f = new File(fileName);
+        return f.exists() && !f.isDirectory();
+    }
+
 }

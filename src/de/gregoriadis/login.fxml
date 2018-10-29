@@ -43,7 +43,7 @@
                   <Button fx:id="loginBtn" layoutX="223.0" layoutY="6.0" mnemonicParsing="false" text="Anmelden" />
                </children>
             </Pane>
-            <Label fx:id="status" text="Überprüfe Status..." />
+            <Label fx:id="status" />
          </children>
       </VBox>
    </children>
