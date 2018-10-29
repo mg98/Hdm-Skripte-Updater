@@ -20,7 +20,7 @@ public class Directory extends Content {
             // Get all contents
             Elements rows = IhreSkripte.selectRows(firstTable);
             for (Element row : rows) {
-                Content content = IhreSkripte.getContentFromRow(row);
+                Content content = IhreSkripte.getContentFromRow(row, getLocalPath());
                 contents.add(content);
             }
         }

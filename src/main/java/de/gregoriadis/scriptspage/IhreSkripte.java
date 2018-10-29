@@ -35,7 +35,7 @@ public class IhreSkripte {
             // Each content
             Elements rows = selectRows(table);
             for (Element row : rows) {
-                course.addContent(getContentFromRow(row));
+                course.addContent(getContentFromRow(row, courseName));
             }
 
             courses.add(course);
@@ -56,7 +56,7 @@ public class IhreSkripte {
         return table.select("tr:not(:first-child)");
     }
 
-    protected static Content getContentFromRow(Element row) {
+    protected static Content getContentFromRow(Element row, String localPath) {
         Elements tds = row.getElementsByTag("td");
 
         Element contentLink = tds.get(0).getElementsByTag("a").get(0);
@@ -76,6 +76,7 @@ public class IhreSkripte {
         content.setName(name);
         content.setUpdatedAt(updatedAt);
         content.setUrl(url);
+        content.setLocalPath(localPath + "/" + name);
 
         return content;
     }
