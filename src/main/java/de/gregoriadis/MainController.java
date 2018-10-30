@@ -26,7 +26,7 @@ public class MainController {
     private Button syncBtn;
 
     @FXML
-    private Label syncInfoLabel;
+    private Label statusLabel;
 
     @FXML
     protected void initialize() {
@@ -43,6 +43,9 @@ public class MainController {
         });
 
         syncBtn.setOnMouseClicked(t -> {
+
+            statusLabel.setText("Synchronisierung läuft...");
+
             Task<Void> task = new Task<Void>() {
                 Synchronizer sync = new Synchronizer();
 
@@ -54,7 +57,7 @@ public class MainController {
 
                 @Override
                 protected void succeeded() {
-                    System.out.println("succeeded");
+                    statusLabel.setText("Fertig!");
                     for (Content content : sync.getLastAdded()) {
                         System.out.println(content.getName());
                     }
@@ -70,8 +73,8 @@ public class MainController {
         });
     }
 
-    protected void setSyncInfo(String text) {
-        syncInfoLabel.setText(text);
+    protected void setStatus(String text) {
+        statusLabel.setText(text);
     }
 
 }

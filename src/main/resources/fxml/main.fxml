@@ -29,9 +29,9 @@
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
                   <Button fx:id="syncBtn" mnemonicParsing="false" text="Synchronisieren" />
-                  <Label fx:id="syncInfoLabel" text="0/0" />
                </children>
             </HBox>
+            <Label fx:id="statusLabel" prefHeight="127.0" prefWidth="621.0" />
          </children>
       </VBox>
    </children>
