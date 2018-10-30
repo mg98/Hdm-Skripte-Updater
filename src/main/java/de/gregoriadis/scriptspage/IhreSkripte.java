@@ -35,7 +35,7 @@ public class IhreSkripte {
             // Each content
             Elements rows = selectRows(table);
             for (Element row : rows) {
-                course.addContent(getContentFromRow(row, courseName));
+                course.addContent(getContentFromRow(row, courseName, true));
             }
 
             courses.add(course);
@@ -48,6 +48,7 @@ public class IhreSkripte {
         return courses;
     }
 
+
     protected static Elements selectTables(Document document) {
         return document.select(".content > table.tablestyle2");
     }
@@ -56,17 +57,18 @@ public class IhreSkripte {
         return table.select("tr:not(:first-child)");
     }
 
-    protected static Content getContentFromRow(Element row, String localPath) {
+    protected static Content getContentFromRow(Element row, String localPath, boolean root) {
         Elements tds = row.getElementsByTag("td");
 
         Element contentLink = tds.get(0).getElementsByTag("a").get(0);
         String name = contentLink.ownText();
-        String url = Main.baseURL + contentLink.attr("href");
+        String url = contentLink.attr("href");
+        if (!url.startsWith("https://")) url = Main.baseURL + url;
 
         String updatedAtString = tds.get(1).ownText();
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern(root ? "dd.MM.yyyy HH:mm" : "HH:mm:ss yyyy/MM/dd");
         DateTime updatedAt = formatter.parseDateTime(updatedAtString);
-        boolean directory = tds.get(3).ownText().equals("directory");
+        boolean directory = tds.get(3).ownText().equals("directory") || tds.get(3).ownText().equals("Ordner");
 
         Content content;
         // Directory

@@ -1,9 +1,14 @@
 package de.gregoriadis.scriptspage;
 
+import de.gregoriadis.Config;
 import de.gregoriadis.Main;
 import de.gregoriadis.Synchronizer;
 import de.gregoriadis.WebScraper;
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +18,7 @@ public class Course {
     private List<Content> contents = new ArrayList<>();
     private String zipDownloadUrl;
 
-    protected List<Content> getContents() {
+    public List<Content> getContents() {
         return contents;
     }
 
@@ -25,7 +30,7 @@ public class Course {
         contents.add(content);
     }
 
-    protected String getName() {
+    public String getName() {
         return name;
     }
 
@@ -41,7 +46,7 @@ public class Course {
         this.zipDownloadUrl = zipDownloadUrl;
     }
 
-    public void downloadZip() {
+    public void download() {
         // Download zip
         String tempZipFile = Synchronizer.getTempDir() + "/" + name + ".zip";
         Main.getLogger().info("Downloading from " + Main.baseURL + zipDownloadUrl);
@@ -49,5 +54,22 @@ public class Course {
                 Main.baseURL + zipDownloadUrl,
                 tempZipFile
         );
+
+        // Extract file
+        Main.getLogger().info("Extracting file to set destination");
+        try {
+            ZipFile zipFile = new ZipFile(tempZipFile);
+            zipFile.extractAll(Config.getInstance().getDirectory() + "/" + name);
+        } catch (ZipException e) {
+            e.printStackTrace();
+        }
+
+        // Delete temp file
+        (new java.io.File(tempZipFile)).delete();
+        Main.getLogger().info("Temp zip file deleted");
+    }
+
+    public boolean locallyExists() {
+        return Files.exists(Paths.get(Config.getInstance().getDirectory() + "/" + name));
     }
 }

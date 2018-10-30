@@ -1,12 +1,18 @@
 package de.gregoriadis.scriptspage;
 
+import de.gregoriadis.Config;
+import de.gregoriadis.Main;
+import de.gregoriadis.Synchronizer;
+import de.gregoriadis.WebScraper;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-abstract class Content {
+public abstract class Content {
 
     private String name;
     private DateTime updatedAt;
@@ -41,13 +47,21 @@ abstract class Content {
         return localPath;
     }
 
+    public File getLocalFile() {
+        return new java.io.File(localPath);
+    }
+
     public void setLocalPath(String localPath) {
         this.localPath = localPath;
     }
 
     public boolean locallyExists() {
-        File f = new File(localPath);
-        return f.exists();
+        return Files.exists(Paths.get(Config.getInstance().getDirectory() + "/" + localPath));
+    }
+
+    public void download() {
+        Main.getLogger().info("Downloading from " + url);
+        WebScraper.getInstance().download(url, Config.getInstance().getDirectory() + "/" + localPath);
     }
 
 }

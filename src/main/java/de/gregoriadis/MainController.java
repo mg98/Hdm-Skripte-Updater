@@ -1,5 +1,6 @@
 package de.gregoriadis;
 
+import de.gregoriadis.scriptspage.Content;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -43,15 +44,20 @@ public class MainController {
 
         syncBtn.setOnMouseClicked(t -> {
             Task<Void> task = new Task<Void>() {
+                Synchronizer sync = new Synchronizer();
+
                 @Override
                 protected Void call() throws Exception {
-                    Main.downloadEverything();
+                    sync.sync();
                     return null;
                 }
 
                 @Override
                 protected void succeeded() {
                     System.out.println("succeeded");
+                    for (Content content : sync.getLastAdded()) {
+                        System.out.println(content.getName());
+                    }
                 }
 
                 @Override

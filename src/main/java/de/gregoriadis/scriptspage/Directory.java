@@ -5,14 +5,16 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Directory extends Content {
 
     private List<Content> contents;
 
-    protected List<Content> getContents() {
+    public List<Content> getContents() {
         if (contents == null) {
+            contents = new ArrayList<>();
             Document document = WebScraper.getInstance().getDocumentFromURL(getUrl());
 
             // Only one table exists on this view
@@ -20,7 +22,7 @@ public class Directory extends Content {
             // Get all contents
             Elements rows = IhreSkripte.selectRows(firstTable);
             for (Element row : rows) {
-                Content content = IhreSkripte.getContentFromRow(row, getLocalPath());
+                Content content = IhreSkripte.getContentFromRow(row, getLocalPath(), false);
                 contents.add(content);
             }
         }

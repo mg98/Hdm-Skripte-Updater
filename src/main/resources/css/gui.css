@@ -1,0 +1,15 @@
+#loginFormHBox {
+    -fx-padding: 0 0 20px 0;
+}
+
+#loginBtn {
+    -fx-right: 0;
+}
+
+#status {
+    -fx-padding: 20px 0 0 0;
+}
+
+#mainWrapper {
+    -fx-padding: 20px;
+}

@@ -36,7 +36,7 @@ public class Main extends Application {
         Parent root = loader.load();
         loginController = loader.getController();
         Scene scene = new Scene(root);
-        scene.getStylesheets().add("/de/gregoriadis/gui.css");
+        scene.getStylesheets().add("/css/gui.css");
 
         primaryStage.setScene(scene);
         if (!Config.getInstance().getUsername().equals("")) {
@@ -60,75 +60,15 @@ public class Main extends Application {
             Parent root = loader.load();
             mainController = loader.getController();
             Scene scene = new Scene(root);
-            scene.getStylesheets().add("/de/gregoriadis/gui.css");
+            scene.getStylesheets().add("/css/gui.css");
             primaryStage.setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        new IhreSkripte();
     }
-
 
     public static void main(String[] args) {
         launch(args);
-    }
-
-    public static void downloadEverything() {
-        final WebScraper scraper = WebScraper.getInstance();
-
-        try {
-            String tempDir = System.getProperty("user.home") + "/.hdmskripteupdater/tmp";
-            FileUtils.deleteDirectory(new File(tempDir));
-            (new File(tempDir)).mkdir();
-
-            Document document = scraper.getDocumentFromURL(baseURL);
-
-            Elements downloads = document.select(".content h2 a");
-
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    getMainController().setSyncInfo("0/" + (downloads.size() - 1));
-                }
-            });
-
-            int i = 0;
-            for (Element download : downloads) {
-                String name = download.parent().ownText();
-                name = name.substring(8, name.length() - 2);
-
-                // Download zip
-                String tempZipFile = tempDir + "/" + name + ".zip";
-                LOGGER.info("Downloading from " + baseURL + download.attr("href"));
-                scraper.download(
-                        baseURL + download.attr("href"),
-                        tempZipFile
-                );
-
-                // Extract file
-                LOGGER.info("Extracting file to set destination");
-                try {
-                    ZipFile zipFile = new ZipFile(tempZipFile);
-                    zipFile.extractAll(Config.getInstance().getDirectory() + "/" + name);
-                } catch (ZipException e) {
-                    e.printStackTrace();
-                }
-
-                // Delete file
-                (new File(tempZipFile)).delete();
-                LOGGER.info("Temp zip file deleted");
-
-                final int finalI = i++;
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        getMainController().setSyncInfo(finalI + "/" + (downloads.size() - 1));
-                    }
-                });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public static void saveLogin(String username, String password) {
