@@ -9,7 +9,9 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public abstract class Content {
@@ -61,7 +63,16 @@ public abstract class Content {
 
     public void download() {
         Main.getLogger().info("Downloading from " + url);
-        WebScraper.getInstance().download(url, Config.getInstance().getDirectory() + "/" + localPath);
+        String location = Config.getInstance().getDirectory() + "/" + localPath;
+        try {
+            System.out.println(Paths.get(location).getParent());
+            Path p = Paths.get(location);
+            p = p.getParent();
+            Files.createDirectories(Paths.get(location).getParent());
+            WebScraper.getInstance().download(url, location);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

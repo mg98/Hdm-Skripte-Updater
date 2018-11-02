@@ -49,9 +49,9 @@ public class Course {
     public void download() {
         // Download zip
         String tempZipFile = Synchronizer.getTempDir() + "/" + name + ".zip";
-        Main.getLogger().info("Downloading from " + Main.baseURL + zipDownloadUrl);
+        Main.getLogger().info("Downloading from " + zipDownloadUrl);
         WebScraper.getInstance().download(
-                Main.baseURL + zipDownloadUrl,
+                zipDownloadUrl,
                 tempZipFile
         );
 

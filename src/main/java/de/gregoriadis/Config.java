@@ -13,18 +13,24 @@ import java.util.Iterator;
 
 public class Config {
 
-    private static Config instance = null;
-    private final static String fileName = System.getProperty("user.home") + "/.hdmskripteupdater/config.json";
+    private static Config instance;
+    private final static String fileDirectory = System.getProperty("user.home") + "/.hdmskripteupdater";
+    private final static String configFile = fileDirectory + "/config.json";
     private String username = "";
     private String password = "";
     private String directory = MainController.filesRootDirectory;
 
     public Config() {
-        final Path configFilePath = Paths.get(fileName);
         try {
-            Files.createDirectories(configFilePath.getParent());
+            // Create working directory to store config and temp files
+            Files.createDirectories(Paths.get(fileDirectory + "/tmp"));
+
+            // Create config json
+            final Path configFilePath = Paths.get(configFile);
             Files.createFile(configFilePath);
-            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+
+            // Write json to file
+            BufferedWriter writer = new BufferedWriter(new FileWriter(configFile));
             writer.write(toJSONString());
             writer.close();
 
@@ -37,7 +43,7 @@ public class Config {
 
         JSONParser parser = new JSONParser();
         try {
-            Object obj = parser.parse(new FileReader(fileName));
+            Object obj = parser.parse(new FileReader(configFile));
             JSONObject jsonObject = (JSONObject) obj;
 
             username = (String) jsonObject.get("username");
@@ -53,7 +59,7 @@ public class Config {
     }
 
     public void save() {
-        try (FileWriter file = new FileWriter(fileName)) {
+        try (FileWriter file = new FileWriter(configFile)) {
             file.write(toJSONString());
             Main.getLogger().info("Config saved");
         } catch (IOException e) {
@@ -102,7 +108,7 @@ public class Config {
     }
 
     public static boolean fileExists() {
-        File f = new File(fileName);
+        File f = new File(configFile);
         return f.exists() && !f.isDirectory();
     }
 

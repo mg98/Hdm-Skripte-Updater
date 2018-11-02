@@ -63,7 +63,14 @@ public class Synchronizer {
                 }
 
             } else {
-                System.out.println(content.getLocalPath());
+                if (content.getClass() == File.class) {
+                    // Download file
+                    content.download();
+                    lastAdded.add(content);
+                } else {
+                    recursiveContents(contents);
+                }
+
             }
         }
     }

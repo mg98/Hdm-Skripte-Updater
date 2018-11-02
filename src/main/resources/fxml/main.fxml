@@ -31,6 +31,7 @@
                   <Button fx:id="syncBtn" mnemonicParsing="false" text="Synchronisieren" />
                </children>
             </HBox>
+            <VBox fx:id="filesVBox" prefHeight="200.0" prefWidth="100.0" />
             <Label fx:id="statusLabel" prefHeight="127.0" prefWidth="621.0" />
          </children>
       </VBox>

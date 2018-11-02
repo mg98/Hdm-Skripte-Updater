@@ -6,13 +6,10 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.controlsfx.control.Notifications;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.apache.commons.io.FileUtils;
-import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.core.ZipFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +27,9 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         primaryStage.setTitle("HdM Skripte Updater");
+        //set icon of the application
+        Image applicationIcon = new Image(getClass().getResourceAsStream("/favicon.png"));
+        primaryStage.getIcons().add(applicationIcon);
 
         // Setup login gui
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));

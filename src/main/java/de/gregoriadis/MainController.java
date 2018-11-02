@@ -7,7 +7,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
+import org.controlsfx.control.Notifications;
 import org.jsoup.nodes.Document;
 
 import java.io.File;
@@ -29,7 +31,11 @@ public class MainController {
     private Label statusLabel;
 
     @FXML
+    private VBox filesVBox;
+
+    @FXML
     protected void initialize() {
+
         directoryTextField.setText(Config.getInstance().getDirectory());
         chooseDirectoryBtn.setOnMouseClicked(t -> {
             DirectoryChooser chooser = new DirectoryChooser();
@@ -60,13 +66,32 @@ public class MainController {
                     statusLabel.setText("Fertig!");
                     for (Content content : sync.getLastAdded()) {
                         System.out.println(content.getName());
+
+                        Label fileLabel = new Label(content.getLocalPath());
+                        fileLabel.setOnMouseClicked(t -> {
+                            // Reveal file in finder
+                        });
+
+                        filesVBox.getChildren().add(fileLabel);
                     }
+
+                    Notifications
+                            .create()
+                            .title("Fertig")
+                            .text("Synchronisierung abgeschlossen!")
+                            .showInformation();
                 }
 
                 @Override
                 protected void failed() {
                     super.failed();
-                    System.out.println("failed");
+                    statusLabel.setText("Bei der Synchronisierung ist ein Fehler aufgetreten.");
+
+                    Notifications
+                            .create()
+                            .title("Fehler")
+                            .text("Bei der Synchronisierung ist ein Fehler aufgetreten.")
+                            .showError();
                 }
             };
             new Thread(task).start();
