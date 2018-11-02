@@ -87,6 +87,13 @@ public class MainController {
                     super.failed();
                     statusLabel.setText("Bei der Synchronisierung ist ein Fehler aufgetreten.");
 
+                    if (!Main.getPrimaryStage().isShowing()){
+                        Main.getPrimaryStage().show();
+                    }
+                    if (!Main.getPrimaryStage().isFocused()) {
+                        Main.getPrimaryStage().requestFocus();
+                    }
+
                     Notifications
                             .create()
                             .title("Fehler")

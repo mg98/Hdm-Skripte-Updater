@@ -19,10 +19,14 @@ public class Synchronizer {
     private List<Content> lastAdded = new ArrayList<>();
 
     public void sync() {
+        Main.getLogger().info("Synchronyzing begins...");
+
         lastAdded.clear();
         IhreSkripte scripts = new IhreSkripte();
         List<Course> courses = scripts.getCourses();
         for (Course course : courses) {
+            Main.getLogger().info("Syncing course " + course.getName());
+
             if (course.locallyExists()) {
                 recursiveContents(course.getContents());
             } else {
@@ -30,6 +34,7 @@ public class Synchronizer {
             }
         }
 
+        Main.getLogger().info("Synchronizing done! " + lastAdded + " items synced.");
     }
 
     public List<Content> getLastAdded() {
@@ -38,6 +43,8 @@ public class Synchronizer {
 
     private void recursiveContents(List<Content> contents) {
         for (Content content : contents) {
+            Main.getLogger().info("Syncing content with path " + content.getLocalPath());
+
             if (content.locallyExists()) {
                 if (content.locallyExists()) {
                     try {
