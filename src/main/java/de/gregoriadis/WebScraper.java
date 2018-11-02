@@ -14,14 +14,30 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.Base64;
 import java.util.HashMap;
 
+/**
+ * Used as singleton, performs HTTP requests, can download data
+ */
 public class WebScraper {
 
+    /**
+     * Singleton instance
+     */
     private static WebScraper instance = null;
+    /**
+     * Variable needed for HTTP authentification
+     */
     private String base64login;
+    /**
+     * Caches documents
+     * TODO: Why do we have this?? Why do we do this?
+     */
     private HashMap<String, Document> cache = new HashMap<>();
 
 
-    public WebScraper() {
+    /**
+     * HTTP authentification for later requests is done or prepared
+     */
+    private WebScraper() {
         this.base64login = new String(Base64.getEncoder().encode((Config.getInstance().getUsername() + ":" + Config.getInstance().getPassword()).getBytes()));
 
         Authenticator.setDefault(new Authenticator() {
@@ -31,6 +47,12 @@ public class WebScraper {
         });
     }
 
+    /**
+     * Get document from url
+     *
+     * @param url
+     * @return HTML document
+     */
     public Document getDocumentFromURL(String url) {
         try {
             if (cache.containsKey(url)) {
@@ -65,6 +87,12 @@ public class WebScraper {
         return null;
     }
 
+    /**
+     * Download file from url
+     *
+     * @param url Download url
+     * @param location Location will file name to store the downloaded file
+     */
     public void download(String url, String location) {
         try {
             URL website = new URL(url);
@@ -76,10 +104,16 @@ public class WebScraper {
         }
     }
 
+    /**
+     * Clears the cache
+     */
     public void clearCache() {
         cache.clear();
     }
 
+    /**
+     * @return Singleton instance
+     */
     public static WebScraper getInstance() {
         if (instance == null) instance = new WebScraper();
 

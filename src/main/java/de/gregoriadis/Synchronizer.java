@@ -15,9 +15,18 @@ import java.util.List;
 
 public class Synchronizer {
 
+    /**
+     * Temp directory to handle immature files
+     */
     private final static String tempDir = System.getProperty("user.home") + "/.hdmskripteupdater/tmp";
+    /**
+     * Stores contents added or updated during the last sync
+     */
     private List<Content> lastAdded = new ArrayList<>();
 
+    /**
+     * Initiates sync process
+     */
     public void sync() {
         Main.getLogger().info("Synchronyzing begins...");
 
@@ -37,10 +46,18 @@ public class Synchronizer {
         Main.getLogger().info("Synchronizing done! " + lastAdded.size() + " items synced.");
     }
 
+    /**
+     * @return Added or updated contents in the last sync
+     */
     public List<Content> getLastAdded() {
         return lastAdded;
     }
 
+    /**
+     * Recursively scans files, directories and sub-directories for synchronization
+     *
+     * @param contents
+     */
     private void recursiveContents(List<Content> contents) {
         for (Content content : contents) {
 
@@ -82,6 +99,9 @@ public class Synchronizer {
         }
     }
 
+    /**
+     * @return Path to temp directory
+     */
     public static String getTempDir() {
         return tempDir;
     }
