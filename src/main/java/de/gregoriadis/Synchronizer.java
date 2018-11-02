@@ -34,7 +34,7 @@ public class Synchronizer {
             }
         }
 
-        Main.getLogger().info("Synchronizing done! " + lastAdded + " items synced.");
+        Main.getLogger().info("Synchronizing done! " + lastAdded.size() + " items synced.");
     }
 
     public List<Content> getLastAdded() {
@@ -43,7 +43,6 @@ public class Synchronizer {
 
     private void recursiveContents(List<Content> contents) {
         for (Content content : contents) {
-            Main.getLogger().info("Syncing content with path " + content.getLocalPath());
 
             if (content.locallyExists()) {
                 if (content.locallyExists()) {
@@ -51,11 +50,12 @@ public class Synchronizer {
                         // Get local updated at date in string
                         FileTime fileTime = Files.getLastModifiedTime(Paths.get(Config.getInstance().getDirectory() + "/" + content.getLocalPath()));
 
-                        long difference = Math.abs(fileTime.toMillis() - content.getUpdatedAt().getMillis());
+                        long difference = content.getUpdatedAt().getMillis() - fileTime.toMillis();
 
                         if (difference > 60000) {
                             if (content.getClass() == File.class) {
                                 // Download file
+                                Main.getLogger().info("Updating local file (old: " + fileTime.toString() + ", new: " + content.getUpdatedAt().toString() + ")");
                                 content.download();
                                 lastAdded.add(content);
                             } else {

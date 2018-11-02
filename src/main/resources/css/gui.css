@@ -13,3 +13,7 @@
 #mainWrapper {
     -fx-padding: 20px;
 }
+
+#filesVBox Label {
+    -fx-cursor: pointer;
+}

@@ -62,9 +62,11 @@ public class IhreSkripte {
 
         Element contentLink = tds.get(0).getElementsByTag("a").get(0);
         String name = contentLink.ownText();
-        String url = contentLink.attr("href");
+        // Get url from href and replace whitespaces
+        String url = contentLink.attr("href").replaceAll("\\s", "%20");
         if (!url.startsWith("https://")) url = Main.baseURL + url;
 
+        System.out.println("1998: " + url);
         String updatedAtString = tds.get(1).ownText();
         DateTimeFormatter formatter = DateTimeFormat.forPattern(root ? "dd.MM.yyyy HH:mm" : "HH:mm:ss yyyy/MM/dd");
         DateTime updatedAt = formatter.parseDateTime(updatedAtString);
@@ -73,7 +75,7 @@ public class IhreSkripte {
         Content content;
         // Directory
         if (directory) content = new Directory();
-            // File
+        // File
         else content = new File();
         content.setName(name);
         content.setUpdatedAt(updatedAt);

@@ -95,7 +95,7 @@ public abstract class Content {
      * @return file object of local file
      */
     public File getLocalFile() {
-        return new java.io.File(localPath);
+        return new java.io.File(Config.getInstance().getDirectory() + "/" + localPath);
     }
 
     /**

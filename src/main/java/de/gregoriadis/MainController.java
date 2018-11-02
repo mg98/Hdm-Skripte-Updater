@@ -12,7 +12,9 @@ import javafx.stage.DirectoryChooser;
 import org.controlsfx.control.Notifications;
 import org.jsoup.nodes.Document;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 
 public class MainController {
 
@@ -51,6 +53,7 @@ public class MainController {
         syncBtn.setOnMouseClicked(t -> {
 
             statusLabel.setText("Synchronisierung läuft...");
+            filesVBox.getChildren().clear();
 
             Task<Void> task = new Task<Void>() {
                 Synchronizer sync = new Synchronizer();
@@ -69,7 +72,12 @@ public class MainController {
 
                         Label fileLabel = new Label(content.getLocalPath());
                         fileLabel.setOnMouseClicked(t -> {
-                            // Reveal file in finder
+                            // Open file
+                            try {
+                                Desktop.getDesktop().open(content.getLocalFile());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         });
 
                         filesVBox.getChildren().add(fileLabel);
