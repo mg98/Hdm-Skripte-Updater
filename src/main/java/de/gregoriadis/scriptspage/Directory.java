@@ -10,8 +10,14 @@ import java.util.List;
 
 public class Directory extends Content {
 
+    /**
+     * Contents inside directory
+     */
     private List<Content> contents;
 
+    /**
+     * @return contents
+     */
     public List<Content> getContents() {
         if (contents == null) {
             contents = new ArrayList<>();
