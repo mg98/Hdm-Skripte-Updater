@@ -1,18 +1,20 @@
 package de.gregoriadis;
 
 import de.gregoriadis.scriptspage.Content;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import org.controlsfx.control.Notifications;
 import org.jsoup.nodes.Document;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
@@ -36,7 +38,14 @@ public class MainController {
     private VBox filesVBox;
 
     @FXML
+    private Pane pane;
+
+    private Thread syncThread;
+
+    @FXML
     protected void initialize() {
+        setupMenuBar();
+
 
         directoryTextField.setText(Config.getInstance().getDirectory());
         chooseDirectoryBtn.setOnMouseClicked(t -> {
@@ -50,26 +59,31 @@ public class MainController {
             Config.getInstance().save();
         });
 
-        syncBtn.setOnMouseClicked(t -> {
+        syncBtn.setOnMouseClicked(t -> initSyncing());
+    }
 
-            statusLabel.setText("Synchronisierung läuft...");
-            filesVBox.getChildren().clear();
-
-            Task<Void> task = new Task<Void>() {
+    private void initSyncing() {
+        if (syncThread != null && syncThread.isAlive()) {
+            Main.getLogger().info("Synchronization already in progress.");
+        } else {
+            Task<Void> syncTask = new Task<Void>() {
                 Synchronizer sync = new Synchronizer();
 
                 @Override
                 protected Void call() throws Exception {
+                    Platform.runLater(() -> {
+                        statusLabel.setText("Synchronisierung läuft...");
+                        filesVBox.getChildren().clear();
+                    });
                     sync.sync();
                     return null;
                 }
 
                 @Override
                 protected void succeeded() {
-                    statusLabel.setText("Fertig!");
-                    for (Content content : sync.getLastAdded()) {
-                        System.out.println(content.getName());
+                    setStatus("Fertig!");
 
+                    for (Content content : sync.getLastAdded()) {
                         Label fileLabel = new Label(content.getLocalPath());
                         fileLabel.setOnMouseClicked(t -> {
                             // Open file
@@ -80,7 +94,7 @@ public class MainController {
                             }
                         });
 
-                        filesVBox.getChildren().add(fileLabel);
+                        Platform.runLater(() -> filesVBox.getChildren().add(fileLabel));
                     }
 
                     Notifications
@@ -93,9 +107,9 @@ public class MainController {
                 @Override
                 protected void failed() {
                     super.failed();
-                    statusLabel.setText("Bei der Synchronisierung ist ein Fehler aufgetreten.");
+                    setStatus("Bei der Synchronisierung ist ein Fehler aufgetreten.");
 
-                    if (!Main.getPrimaryStage().isShowing()){
+                    if (!Main.getPrimaryStage().isShowing()) {
                         Main.getPrimaryStage().show();
                     }
                     if (!Main.getPrimaryStage().isFocused()) {
@@ -109,12 +123,27 @@ public class MainController {
                             .showError();
                 }
             };
-            new Thread(task).start();
-        });
+            syncThread = new Thread(syncTask);
+            syncThread.start();
+        }
+    }
+
+    private void setupMenuBar() {
+        MenuBar menuBar = new MenuBar();
+        menuBar.useSystemMenuBarProperty().set(true);
+
+        Menu menu = new Menu("HdMSkripte");
+        MenuItem item = new MenuItem("Synchronisieren");
+        item.setOnAction(e -> initSyncing());
+
+        menu.getItems().add(item);
+        menuBar.getMenus().add(menu);
+
+        pane.getChildren().add(menuBar);
     }
 
     protected void setStatus(String text) {
-        statusLabel.setText(text);
+        Platform.runLater(() -> statusLabel.setText(text));
     }
 
 }

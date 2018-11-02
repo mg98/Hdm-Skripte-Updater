@@ -1,17 +1,19 @@
 package de.gregoriadis;
 
-import de.gregoriadis.scriptspage.IhreSkripte;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.controlsfx.control.Notifications;
 import org.jsoup.nodes.Document;
+import javafx.scene.control.MenuBar;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -28,7 +30,7 @@ public class Main extends Application {
         this.primaryStage = primaryStage;
         primaryStage.setTitle("HdM Skripte Updater");
         //set icon of the application
-        Image applicationIcon = new Image(getClass().getResourceAsStream("/favicon.png"));
+        Image applicationIcon = new Image(getClass().getResourceAsStream("/img/favicon.png"));
         primaryStage.getIcons().add(applicationIcon);
 
         // Setup login gui
@@ -39,6 +41,7 @@ public class Main extends Application {
         scene.getStylesheets().add("/css/gui.css");
 
         primaryStage.setScene(scene);
+
         if (!Config.getInstance().getUsername().equals("")) {
             // Try to login
             Document doc = WebScraper.getInstance().getDocumentFromURL(Main.baseURL);
