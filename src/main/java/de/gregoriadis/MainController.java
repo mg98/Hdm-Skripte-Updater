@@ -3,18 +3,26 @@ package de.gregoriadis;
 import de.gregoriadis.scriptspage.Content;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+
+import java.awt.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import org.controlsfx.control.Notifications;
-import org.jsoup.nodes.Document;
 
+import java.awt.SystemTray;
 import java.awt.Desktop;
+import java.awt.TrayIcon;
+import java.awt.PopupMenu;
+import java.awt.Toolkit;
+import java.awt.Image;
+import java.awt.AWTException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -42,9 +50,11 @@ public class MainController {
 
     private Thread syncThread;
 
+    private SystemTray tray;
+
     @FXML
     protected void initialize() {
-        setupMenuBar();
+        setupToolbar();
 
 
         directoryTextField.setText(Config.getInstance().getDirectory());
@@ -66,6 +76,10 @@ public class MainController {
         if (syncThread != null && syncThread.isAlive()) {
             Main.getLogger().info("Synchronization already in progress.");
         } else {
+
+            Image image = Toolkit.getDefaultToolkit().createImage("src/main/resources/img/progressTrayIcon.svg");
+            TrayIcon progressTray = new TrayIcon(image, "Synchronisiere...");
+
             Task<Void> syncTask = new Task<Void>() {
                 Synchronizer sync = new Synchronizer();
 
@@ -74,6 +88,13 @@ public class MainController {
                     Platform.runLater(() -> {
                         statusLabel.setText("Synchronisierung läuft...");
                         filesVBox.getChildren().clear();
+                        try {
+                            tray.remove(tray.getTrayIcons()[0]);
+                            tray.add(progressTray);
+                        } catch (AWTException e) {
+                            e.printStackTrace();
+                        }
+
                     });
                     sync.sync();
                     return null;
@@ -81,7 +102,10 @@ public class MainController {
 
                 @Override
                 protected void succeeded() {
-                    setStatus("Fertig!");
+                    Platform.runLater(() -> {
+                        statusLabel.setText("Fertig!");
+                        //tray.remove(progressTray);
+                    });
 
                     for (Content content : sync.getLastAdded()) {
                         Label fileLabel = new Label(content.getLocalPath());
@@ -107,7 +131,11 @@ public class MainController {
                 @Override
                 protected void failed() {
                     super.failed();
-                    setStatus("Bei der Synchronisierung ist ein Fehler aufgetreten.");
+
+                    Platform.runLater(() -> {
+                        statusLabel.setText("Bei der Synchronisierung ist ein Fehler aufgetreten.");
+                        //tray.remove(progressTray);
+                    });
 
                     if (!Main.getPrimaryStage().isShowing()) {
                         Main.getPrimaryStage().show();
@@ -128,18 +156,30 @@ public class MainController {
         }
     }
 
-    private void setupMenuBar() {
-        MenuBar menuBar = new MenuBar();
-        menuBar.useSystemMenuBarProperty().set(true);
+    private void setupToolbar() {
+        if (SystemTray.isSupported()) {
+            tray = SystemTray.getSystemTray();
+            
+            Image image = Toolkit.getDefaultToolkit().createImage("src/main/resources/img/favicon.png");
 
-        Menu menu = new Menu("HdMSkripte");
-        MenuItem item = new MenuItem("Synchronisieren");
-        item.setOnAction(e -> initSyncing());
+            PopupMenu popup = new PopupMenu();
+            
+            MenuItem syncMenuItem = new MenuItem("Synchronisieren");
+            syncMenuItem.addActionListener(e -> initSyncing());
 
-        menu.getItems().add(item);
-        menuBar.getMenus().add(menu);
+            popup.add(syncMenuItem);
 
-        pane.getChildren().add(menuBar);
+
+            TrayIcon trayIcon = new TrayIcon(image, "HdM Skripte Updater", popup);
+            try {
+                tray.add(trayIcon);
+            } catch (AWTException e) {
+                System.err.println(e);
+            }
+
+        } else {
+            Main.getLogger().warning("System Tray not supported!");
+        }
     }
 
     protected void setStatus(String text) {
