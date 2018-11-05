@@ -77,8 +77,9 @@ public class MainController {
             Main.getLogger().info("Synchronization already in progress.");
         } else {
 
-            Image image = Toolkit.getDefaultToolkit().createImage("src/main/resources/img/progressTrayIcon.svg");
-            TrayIcon progressTray = new TrayIcon(image, "Synchronisiere...");
+            Image image = Toolkit.getDefaultToolkit().createImage("src/main/resources/img/progressTrayIcon.png");
+            tray.getTrayIcons()[0].setImage(image);
+            tray.getTrayIcons()[0].setToolTip("Synchronisiere...");
 
             Task<Void> syncTask = new Task<Void>() {
                 Synchronizer sync = new Synchronizer();
@@ -88,12 +89,6 @@ public class MainController {
                     Platform.runLater(() -> {
                         statusLabel.setText("Synchronisierung läuft...");
                         filesVBox.getChildren().clear();
-                        try {
-                            tray.remove(tray.getTrayIcons()[0]);
-                            tray.add(progressTray);
-                        } catch (AWTException e) {
-                            e.printStackTrace();
-                        }
 
                     });
                     sync.sync();
@@ -103,8 +98,8 @@ public class MainController {
                 @Override
                 protected void succeeded() {
                     Platform.runLater(() -> {
+                        setupToolbar();
                         statusLabel.setText("Fertig!");
-                        //tray.remove(progressTray);
                     });
 
                     for (Content content : sync.getLastAdded()) {
@@ -133,6 +128,7 @@ public class MainController {
                     super.failed();
 
                     Platform.runLater(() -> {
+                        setupToolbar();
                         statusLabel.setText("Bei der Synchronisierung ist ein Fehler aufgetreten.");
                         //tray.remove(progressTray);
                     });
@@ -158,25 +154,28 @@ public class MainController {
 
     private void setupToolbar() {
         if (SystemTray.isSupported()) {
-            tray = SystemTray.getSystemTray();
-            
             Image image = Toolkit.getDefaultToolkit().createImage("src/main/resources/img/favicon.png");
-
             PopupMenu popup = new PopupMenu();
-            
+
             MenuItem syncMenuItem = new MenuItem("Synchronisieren");
             syncMenuItem.addActionListener(e -> initSyncing());
 
             popup.add(syncMenuItem);
 
+            TrayIcon defaultTray = new TrayIcon(image, "HdM Skripte Updater", popup);
 
-            TrayIcon trayIcon = new TrayIcon(image, "HdM Skripte Updater", popup);
-            try {
-                tray.add(trayIcon);
-            } catch (AWTException e) {
-                System.err.println(e);
+            if (tray != null && tray.getTrayIcons().length > 0) {
+                TrayIcon trayIcon = tray.getTrayIcons()[0];
+                trayIcon.setImage(defaultTray.getImage());
+                trayIcon.setToolTip(defaultTray.getToolTip());
+            } else {
+                tray = SystemTray.getSystemTray();
+                try {
+                    tray.add(defaultTray);
+                } catch (AWTException e) {
+                    System.err.println(e);
+                }
             }
-
         } else {
             Main.getLogger().warning("System Tray not supported!");
         }
