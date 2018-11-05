@@ -8,6 +8,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import java.awt.MenuItem;
+
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -48,6 +50,9 @@ public class MainController {
     @FXML
     private Pane pane;
 
+    @FXML
+    private ScrollPane filesScrollPane;
+
     private Thread syncThread;
 
     private SystemTray tray;
@@ -55,7 +60,6 @@ public class MainController {
     @FXML
     protected void initialize() {
         setupToolbar();
-
 
         directoryTextField.setText(Config.getInstance().getDirectory());
         chooseDirectoryBtn.setOnMouseClicked(t -> {
@@ -76,21 +80,20 @@ public class MainController {
         if (syncThread != null && syncThread.isAlive()) {
             Main.getLogger().info("Synchronization already in progress.");
         } else {
+            filesScrollPane.setVisible(false);
+            filesVBox.getChildren().clear();
+            statusLabel.setText("Synchronisierung läuft...");
 
             Image image = Toolkit.getDefaultToolkit().createImage("src/main/resources/img/progressTrayIcon.png");
             tray.getTrayIcons()[0].setImage(image);
             tray.getTrayIcons()[0].setToolTip("Synchronisiere...");
+
 
             Task<Void> syncTask = new Task<Void>() {
                 Synchronizer sync = new Synchronizer();
 
                 @Override
                 protected Void call() throws Exception {
-                    Platform.runLater(() -> {
-                        statusLabel.setText("Synchronisierung läuft...");
-                        filesVBox.getChildren().clear();
-
-                    });
                     sync.sync();
                     return null;
                 }
@@ -102,8 +105,11 @@ public class MainController {
                         statusLabel.setText("Fertig!");
                     });
 
+                    if (sync.getLastAdded().size() > 0) filesScrollPane.setVisible(true);
+
                     for (Content content : sync.getLastAdded()) {
                         Label fileLabel = new Label(content.getLocalPath());
+                        fileLabel.setStyle("-fx-cursor: pointer;");
                         fileLabel.setOnMouseClicked(t -> {
                             // Open file
                             try {
@@ -116,11 +122,9 @@ public class MainController {
                         Platform.runLater(() -> filesVBox.getChildren().add(fileLabel));
                     }
 
-                    Notifications
-                            .create()
-                            .title("Fertig")
-                            .text("Synchronisierung abgeschlossen!")
-                            .showInformation();
+                    INsUserNotificationsBridge.instance.sendNotification(
+                            "Fertig", "",
+                            "Synchronisierung abgeschlossen!", 0);
                 }
 
                 @Override
@@ -133,18 +137,9 @@ public class MainController {
                         //tray.remove(progressTray);
                     });
 
-                    if (!Main.getPrimaryStage().isShowing()) {
-                        Main.getPrimaryStage().show();
-                    }
-                    if (!Main.getPrimaryStage().isFocused()) {
-                        Main.getPrimaryStage().requestFocus();
-                    }
-
-                    Notifications
-                            .create()
-                            .title("Fehler")
-                            .text("Bei der Synchronisierung ist ein Fehler aufgetreten.")
-                            .showError();
+                    INsUserNotificationsBridge.instance.sendNotification(
+                            "Fehler", "",
+                            "Bei der Synchronisierung ist ein Fehler aufgetreten.", 0);
                 }
             };
             syncThread = new Thread(syncTask);

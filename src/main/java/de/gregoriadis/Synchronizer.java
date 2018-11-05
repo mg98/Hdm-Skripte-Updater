@@ -61,6 +61,7 @@ public class Synchronizer {
     private void recursiveContents(List<Content> contents) {
         for (Content content : contents) {
 
+            System.out.println(content.getUrl());
             if (content.locallyExists()) {
                 if (content.locallyExists()) {
                     try {
@@ -76,7 +77,7 @@ public class Synchronizer {
                                 content.download();
                                 lastAdded.add(content);
                             } else {
-                                // Directory aleeert
+                                // Directory
                                 Directory dir = (Directory) content;
                                 recursiveContents(dir.getContents());
                             }
@@ -86,13 +87,16 @@ public class Synchronizer {
                     }
                 }
 
+
             } else {
                 if (content.getClass() == File.class) {
                     // Download file
                     content.download();
                     lastAdded.add(content);
                 } else {
-                    recursiveContents(contents);
+                    // Directory
+                    Directory dir = (Directory) content;
+                    recursiveContents(dir.getContents());
                 }
 
             }
