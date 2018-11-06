@@ -14,7 +14,16 @@ import javafx.stage.Stage;
 import org.jsoup.nodes.Document;
 import javafx.scene.control.MenuBar;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.KeyStore;
 import java.util.logging.Logger;
 
 public class Main extends Application {
@@ -25,8 +34,13 @@ public class Main extends Application {
     private final static Logger LOGGER = Logger.getLogger(Main.class.getName());
     private static Stage primaryStage;
 
+
+
     @Override
     public void start(Stage primaryStage) throws Exception {
+        // Setting static AES key
+        AES.setKey("zE;=vveFr8GBQWBR;=z4F877MJyifG8y");
+
         this.primaryStage = primaryStage;
         primaryStage.setTitle("HdM Skripte Updater");
         //set icon of the application

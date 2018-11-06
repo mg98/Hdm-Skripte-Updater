@@ -42,7 +42,9 @@ public class WebScraper {
 
         Authenticator.setDefault(new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(Config.getInstance().getUsername(), Config.getInstance().getPassword().toCharArray());
+                return new PasswordAuthentication(
+                        Config.getInstance().getUsername(),
+                        Config.getInstance().getPassword().toCharArray());
             }
         });
     }

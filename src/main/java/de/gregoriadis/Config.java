@@ -127,15 +127,15 @@ public class Config {
     /**
      * @return password
      */
-    public String getPassword() {
-        return password;
+    protected String getPassword() {
+        return AES.decrypt(password);
     }
 
     /**
      * @param password
      */
-    public void setPassword(String password) {
-        this.password = password;
+    protected void setPassword(String password) {
+        this.password = AES.encrypt(password);
     }
 
     /**
@@ -143,6 +143,13 @@ public class Config {
      */
     public String getDirectory() {
         return directory;
+    }
+
+    /**
+     * @return file directory
+     */
+    public static String getFileDirectory() {
+        return fileDirectory;
     }
 
     /**
