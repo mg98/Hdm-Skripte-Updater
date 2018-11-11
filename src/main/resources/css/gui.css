@@ -21,3 +21,15 @@
 #logoutHBox {
     -fx-cursor: hand;
 }
+
+#settingsBtn {
+    -fx-cursor: hand;
+}
+
+.check-box {
+    -fx-padding: 5px 0 5px 0;
+}
+
+.radio-button {
+    -fx-padding: 0 0 5px 5px;
+}

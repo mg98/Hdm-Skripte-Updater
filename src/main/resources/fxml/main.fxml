@@ -2,61 +2,94 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
 <GridPane fx:id="mainWrapper" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.gregoriadis.MainController">
   <columnConstraints>
-    <ColumnConstraints />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+    <ColumnConstraints maxWidth="556.0" minWidth="0.0" prefWidth="0.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="600.0" minWidth="10.0" prefWidth="600.0" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints />
-      <RowConstraints maxHeight="400.0" minHeight="10.0" prefHeight="380.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="197.0" minHeight="0.0" prefHeight="20.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="80.0" minHeight="0.0" prefHeight="0.0" />
+    <RowConstraints maxHeight="211.0" minHeight="0.0" prefHeight="142.0" />
+      <RowConstraints maxHeight="400.0" minHeight="10.0" prefHeight="227.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="197.0" minHeight="0.0" prefHeight="31.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <VBox prefHeight="299.0" prefWidth="535.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+      <VBox prefHeight="97.0" prefWidth="600.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <children>
-            <Label prefHeight="87.0" prefWidth="599.0" text="Bitte wähle das Verzeichnis welches du mit den Skripten der HdM-Webseite synchronisieren möchtest." wrapText="true" />
-            <HBox prefHeight="63.0" prefWidth="481.0">
+            <Label prefHeight="64.0" prefWidth="599.0" text="Bitte wähle das Verzeichnis welches du mit den Skripten der HdM-Webseite synchronisieren möchtest." wrapText="true" />
+            <HBox prefHeight="29.0" prefWidth="600.0">
                <children>
                   <TextField fx:id="directoryTextField" prefHeight="27.0" prefWidth="423.0" />
                   <Button fx:id="chooseDirectoryBtn" mnemonicParsing="false" text="Durchsuchen..." />
                </children>
             </HBox>
-            <HBox prefHeight="48.0" prefWidth="600.0">
+            <HBox prefHeight="0.0" prefWidth="600.0">
                <children>
-                  <Button fx:id="syncBtn" mnemonicParsing="false" text="Synchronisieren" />
+                  <Button fx:id="syncBtn" mnemonicParsing="false" prefHeight="32.0" prefWidth="117.0" text="Synchronisieren">
+                       <HBox.margin>
+                           <Insets>
+                               <right>10</right>
+                           </Insets>
+                       </HBox.margin>
+                  </Button>
+                  <ImageView fx:id="settingsBtn" fitHeight="28.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/settings-icon.png" />
+                     </image>
+                  </ImageView>
                </children>
                <padding>
                   <Insets bottom="20.0" top="10.0" />
                </padding>
             </HBox>
-            <ScrollPane fx:id="filesScrollPane" prefHeight="200.0" prefWidth="200.0" visible="false">
+         </children>
+      </VBox>
+      <VBox prefHeight="131.0" prefWidth="600.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <children>
+            <ScrollPane fx:id="filesScrollPane" prefHeight="177.0" prefWidth="600.0" visible="false">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="176.0" prefWidth="227.0">
                      <children>
                         <VBox fx:id="filesVBox" />
                      </children>
                   </AnchorPane>
               </content>
             </ScrollPane>
-            <Label fx:id="statusLabel" prefHeight="127.0" prefWidth="621.0" />
+            <Label fx:id="statusLabel" prefHeight="36.0" prefWidth="600.0" />
          </children>
       </VBox>
-      <Pane fx:id="pane" prefHeight="0.0" prefWidth="0.0" GridPane.rowIndex="1" />
-      <HBox fx:id="logoutHBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="21.0" prefWidth="74.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+      <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <children>
+            <Label text="Umgang mit bereits existierenden Dateien">
+               <padding>
+                  <Insets bottom="5.0" />
+               </padding>
+            </Label>
+            <RadioButton mnemonicParsing="false" text="Datei wird automatisch heruntergeladen und überschrieben">
+               <toggleGroup>
+                  <ToggleGroup fx:id="fileUpdateHandling" />
+               </toggleGroup></RadioButton>
+            <RadioButton mnemonicParsing="false" text="Datei wird automatisch heruntergeladen, beide Dateien werden behalten" toggleGroup="$fileUpdateHandling" />
+            <RadioButton mnemonicParsing="false" text="Nur über Update informieren, Download soll manuell ausgeführt werden" toggleGroup="$fileUpdateHandling" />
+            <CheckBox mnemonicParsing="false" text="ZIP-Archive automatisch entpacken und löschen" />
+         </children>
+      </VBox>
+      <HBox fx:id="logoutHBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="21.0" prefWidth="74.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
          <children>
             <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                <image>
