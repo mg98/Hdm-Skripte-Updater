@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -11,16 +14,17 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane alignment="center" hgap="10" prefHeight="217.0" prefWidth="340.0" style="-fx-width: 800px;" vgap="10" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.gregoriadis.LoginController">
+<GridPane alignment="center" hgap="10" prefHeight="400.0" prefWidth="600.0" vgap="10" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.gregoriadis.LoginController">
    <columnConstraints>
       <ColumnConstraints />
    </columnConstraints>
    <rowConstraints>
       <RowConstraints />
       <RowConstraints />
+      <RowConstraints />
    </rowConstraints>
    <children>
-      <VBox prefHeight="137.0" prefWidth="303.0">
+      <VBox prefHeight="137.0" prefWidth="303.0" GridPane.rowIndex="1">
          <children>
             <HBox fx:id="loginFormHBox" prefHeight="35.0" prefWidth="200.0">
                <children>
@@ -45,6 +49,14 @@
             </Pane>
             <Label fx:id="status" />
          </children>
+         <padding>
+            <Insets top="20.0" />
+         </padding>
       </VBox>
+      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER">
+         <image>
+            <Image url="@../img/hdm_logo.png" />
+         </image>
+      </ImageView>
    </children>
 </GridPane>

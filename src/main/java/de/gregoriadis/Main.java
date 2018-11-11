@@ -4,26 +4,11 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.jsoup.nodes.Document;
-import javafx.scene.control.MenuBar;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.KeyStore;
 import java.util.logging.Logger;
 
 public class Main extends Application {
@@ -33,6 +18,8 @@ public class Main extends Application {
     private static MainController mainController;
     private final static Logger LOGGER = Logger.getLogger(Main.class.getName());
     private static Stage primaryStage;
+    private static Scene loginScene;
+    private static Scene mainScene;
 
 
 
@@ -47,14 +34,21 @@ public class Main extends Application {
         Image applicationIcon = new Image(getClass().getResourceAsStream("/img/favicon.png"));
         primaryStage.getIcons().add(applicationIcon);
 
-        // Setup login gui
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
-        Parent root = loader.load();
-        loginController = loader.getController();
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/css/gui.css");
+        // Setup login scene
+        FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
+        Parent loginRoot = loginLoader.load();
+        loginController = loginLoader.getController();
+        loginScene = new Scene(loginRoot);
+        loginScene.getStylesheets().add("/css/gui.css");
 
-        primaryStage.setScene(scene);
+        // Setup main scene
+        FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
+        Parent mainRoot = mainLoader.load();
+        mainController = mainLoader.getController();
+        mainScene = new Scene(mainRoot);
+        mainScene.getStylesheets().add("/css/gui.css");
+
+        switchToLoginScene();
 
         if (!Config.getInstance().getUsername().equals("")) {
             // Try to login
@@ -64,24 +58,21 @@ public class Main extends Application {
             } else {
                 // Successful login
                 LOGGER.info("Config successfull");
-                switchToMainGui();
+                switchToMainScene();
             }
         }
 
         primaryStage.show();
     }
 
-    public static void switchToMainGui() {
-        try {
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource("/fxml/main.fxml"));
-            Parent root = loader.load();
-            mainController = loader.getController();
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add("/css/gui.css");
-            primaryStage.setScene(scene);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void switchToMainScene() {
+        mainController.initialize();
+        primaryStage.setScene(mainScene);
+    }
+
+    public static void switchToLoginScene() {
+        loginController.initialize();
+        primaryStage.setScene(loginScene);
     }
 
     public static void main(String[] args) {

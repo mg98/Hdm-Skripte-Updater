@@ -17,3 +17,7 @@
 #filesScrollPane {
     -fx-padding: 5px;
 }
+
+#logoutHBox {
+    -fx-cursor: hand;
+}

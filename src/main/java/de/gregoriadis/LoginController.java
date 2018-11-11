@@ -32,7 +32,7 @@ public class LoginController {
             WebScraper.getInstance().clearCache();
             Document doc = WebScraper.getInstance().getDocumentFromURL(Main.baseURL);
             if (doc != null) {
-                Main.switchToMainGui();
+                Main.switchToMainScene();
             }
         });
     }

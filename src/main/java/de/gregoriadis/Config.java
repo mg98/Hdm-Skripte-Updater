@@ -97,6 +97,15 @@ public class Config {
     }
 
     /**
+     * Reset hdm login credentials
+     */
+    public void resetCredentials() {
+        username = "";
+        password = "";
+        save();
+    }
+
+    /**
      * Generates a JSON string from the settings
      *
      * @return JSON string

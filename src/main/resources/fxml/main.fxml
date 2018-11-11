@@ -5,6 +5,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -20,12 +22,13 @@
   </columnConstraints>
   <rowConstraints>
     <RowConstraints />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="400.0" minHeight="10.0" prefHeight="380.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="197.0" minHeight="0.0" prefHeight="20.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
       <VBox prefHeight="299.0" prefWidth="535.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <children>
-            <Label prefHeight="58.0" prefWidth="476.0" text="Bitte wähle das Verzeichnis welches du mit den Skripten der HdM-Webseite synchronisieren möchtest" wrapText="true" />
+            <Label prefHeight="87.0" prefWidth="599.0" text="Bitte wähle das Verzeichnis welches du mit den Skripten der HdM-Webseite synchronisieren möchtest." wrapText="true" />
             <HBox prefHeight="63.0" prefWidth="481.0">
                <children>
                   <TextField fx:id="directoryTextField" prefHeight="27.0" prefWidth="423.0" />
@@ -53,5 +56,19 @@
          </children>
       </VBox>
       <Pane fx:id="pane" prefHeight="0.0" prefWidth="0.0" GridPane.rowIndex="1" />
+      <HBox fx:id="logoutHBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="21.0" prefWidth="74.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+         <children>
+            <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../img/logout.png" />
+               </image>
+            </ImageView>
+            <Label text="Logout">
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
+            </Label>
+         </children>
+      </HBox>
    </children>
 </GridPane>

@@ -11,6 +11,7 @@ import java.awt.MenuItem;
 
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -48,10 +49,10 @@ public class MainController {
     private VBox filesVBox;
 
     @FXML
-    private Pane pane;
+    private ScrollPane filesScrollPane;
 
     @FXML
-    private ScrollPane filesScrollPane;
+    private HBox logoutHBox;
 
     private Thread syncThread;
 
@@ -74,6 +75,11 @@ public class MainController {
         });
 
         syncBtn.setOnMouseClicked(t -> initSyncing());
+
+        logoutHBox.setOnMouseClicked(t -> {
+            Config.getInstance().resetCredentials();
+            Main.switchToLoginScene();
+        });
     }
 
     private void initSyncing() {
@@ -109,7 +115,7 @@ public class MainController {
 
                     for (Content content : sync.getLastAdded()) {
                         Label fileLabel = new Label(content.getLocalPath());
-                        fileLabel.setStyle("-fx-cursor: pointer;");
+                        fileLabel.setStyle("-fx-cursor: hand;");
                         fileLabel.setOnMouseClicked(t -> {
                             // Open file
                             try {
