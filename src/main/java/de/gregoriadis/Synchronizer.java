@@ -1,6 +1,7 @@
 package de.gregoriadis;
 
 import de.gregoriadis.scriptspage.*;
+import de.gregoriadis.Config.FileUpdateHandling;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -23,6 +24,14 @@ public class Synchronizer {
      * Stores contents added or updated during the last sync
      */
     private List<Content> lastAdded = new ArrayList<>();
+    /**
+     * How to handle updates on existing files
+     */
+    private FileUpdateHandling mode;
+
+    public Synchronizer() {
+        mode = Config.getInstance().getFileUpdateHandling();
+    }
 
     /**
      * Initiates sync process
@@ -74,7 +83,7 @@ public class Synchronizer {
                             if (content.getClass() == File.class) {
                                 // Download file
                                 Main.getLogger().info("Updating local file (old: " + fileTime.toString() + ", new: " + content.getUpdatedAt().toString() + ")");
-                                content.download();
+                                content.download(true);
                                 lastAdded.add(content);
                             } else {
                                 // Directory
@@ -87,11 +96,23 @@ public class Synchronizer {
                     }
                 }
 
-
             } else {
                 if (content.getClass() == File.class) {
                     // Download file
-                    content.download();
+                    switch (mode) {
+                        case OVERWRITE:
+                            content.download(true);
+                            break;
+                        case RENAME:
+                            content.download(false);
+                            break;
+                        case NOTIFY:
+                            if (!content.locallyExists()) {
+                                content.download(true);
+                            }
+                            break;
+                    }
+
                     lastAdded.add(content);
                 } else {
                     // Directory

@@ -1,5 +1,8 @@
 package de.gregoriadis;
 
+import de.gregoriadis.Config;
+import de.gregoriadis.Main;
+import de.gregoriadis.WebScraper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

@@ -1,28 +1,34 @@
 package de.gregoriadis;
 
+import de.gregoriadis.Config;
+import de.gregoriadis.INsUserNotificationsBridge;
+import de.gregoriadis.Main;
+import de.gregoriadis.Synchronizer;
+import de.gregoriadis.Config.FileUpdateHandling;
 import de.gregoriadis.scriptspage.Content;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 
 import java.awt.MenuItem;
 
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import org.controlsfx.control.Notifications;
 
+import javafx.scene.image.Image;
+
 import java.awt.SystemTray;
 import java.awt.Desktop;
 import java.awt.TrayIcon;
 import java.awt.PopupMenu;
 import java.awt.Toolkit;
-import java.awt.Image;
 import java.awt.AWTException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +37,7 @@ import java.io.IOException;
 
 public class MainController {
 
-    public final static String filesRootDirectory = System.getProperty("user.home");
+    protected final static String filesRootDirectory = System.getProperty("user.home");
 
     @FXML
     private TextField directoryTextField;
@@ -53,6 +59,15 @@ public class MainController {
 
     @FXML
     private HBox logoutHBox;
+
+    @FXML
+    private ToggleGroup fileUpdateHandling;
+
+    @FXML
+    private VBox syncWrapperVBox;
+
+    @FXML
+    private VBox settingsWrapperVBox;
 
     private Thread syncThread;
 
@@ -76,13 +91,27 @@ public class MainController {
 
         syncBtn.setOnMouseClicked(t -> initSyncing());
 
-        logoutHBox.setOnMouseClicked(t -> {
-            Config.getInstance().resetCredentials();
-            Main.switchToLoginScene();
+        int radioIndex = Config.getInstance().getFileUpdateHandling().getRadioIndex();
+        fileUpdateHandling.getToggles().get(radioIndex).setSelected(true);
+
+        for (FileUpdateHandling fuh : FileUpdateHandling.values()) {
+            fileUpdateHandling.getToggles().get(fuh.getRadioIndex()).setUserData(fuh);
+        }
+
+        fileUpdateHandling.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> {
+            if (fileUpdateHandling.getSelectedToggle() != null) {
+                FileUpdateHandling setting = (FileUpdateHandling) fileUpdateHandling.getSelectedToggle().getUserData();
+                Config.getInstance().setFileUpdateHandling(setting);
+                Config.getInstance().save();
+            }
         });
+
+        logoutHBox.setOnMouseClicked(t -> Main.logout());
     }
 
     private void initSyncing() {
+        settingsWrapperVBox.setVisible(false);
+        syncWrapperVBox.setVisible(true);
         if (syncThread != null && syncThread.isAlive()) {
             Main.getLogger().info("Synchronization already in progress.");
         } else {
@@ -90,7 +119,7 @@ public class MainController {
             filesVBox.getChildren().clear();
             statusLabel.setText("Synchronisierung läuft...");
 
-            Image image = Toolkit.getDefaultToolkit().createImage("src/main/resources/img/progressTrayIcon.png");
+            java.awt.Image image = Toolkit.getDefaultToolkit().createImage("src/main/resources/img/progressTrayIcon.png");
             tray.getTrayIcons()[0].setImage(image);
             tray.getTrayIcons()[0].setToolTip("Synchronisiere...");
 
@@ -114,9 +143,20 @@ public class MainController {
                     if (sync.getLastAdded().size() > 0) filesScrollPane.setVisible(true);
 
                     for (Content content : sync.getLastAdded()) {
+                        HBox fileHBox = new HBox();
+
+                        String imgPath = "/img/file.png";
+                        if (content.isDownloaded()) imgPath = "/img/file-saved.png";
+                        ImageView fileImageView = new ImageView(
+                                new Image(Main.class.getResourceAsStream(imgPath)));
+                        fileImageView.setFitWidth(18);
+                        fileImageView.setFitHeight(18);
+
                         Label fileLabel = new Label(content.getLocalPath());
-                        fileLabel.setStyle("-fx-cursor: hand;");
-                        fileLabel.setOnMouseClicked(t -> {
+                        fileLabel.setStyle("-fx-padding: 0 0 6px 5px");
+
+                        fileHBox.setStyle("-fx-cursor: hand");
+                        fileHBox.setOnMouseClicked(t -> {
                             // Open file
                             try {
                                 Desktop.getDesktop().open(content.getLocalFile());
@@ -125,7 +165,10 @@ public class MainController {
                             }
                         });
 
-                        Platform.runLater(() -> filesVBox.getChildren().add(fileLabel));
+                        fileHBox.getChildren().add(fileImageView);
+                        fileHBox.getChildren().add(fileLabel);
+
+                        Platform.runLater(() -> filesVBox.getChildren().add(fileHBox));
                     }
 
                     INsUserNotificationsBridge.instance.sendNotification(
@@ -155,7 +198,7 @@ public class MainController {
 
     private void setupToolbar() {
         if (SystemTray.isSupported()) {
-            Image image = Toolkit.getDefaultToolkit().createImage("src/main/resources/img/favicon.png");
+            java.awt.Image image = Toolkit.getDefaultToolkit().createImage("src/main/resources/img/favicon.png");
             PopupMenu popup = new PopupMenu();
 
             MenuItem syncMenuItem = new MenuItem("Synchronisieren");

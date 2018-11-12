@@ -8,7 +8,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.jsoup.nodes.Document;
 
-import java.io.IOException;
 import java.util.logging.Logger;
 
 public class Main extends Application {
@@ -20,8 +19,6 @@ public class Main extends Application {
     private static Stage primaryStage;
     private static Scene loginScene;
     private static Scene mainScene;
-
-
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -66,7 +63,6 @@ public class Main extends Application {
     }
 
     public static void switchToMainScene() {
-        mainController.initialize();
         primaryStage.setScene(mainScene);
     }
 
@@ -80,11 +76,14 @@ public class Main extends Application {
     }
 
     public static void saveLogin(String username, String password) {
-        System.out.println("save login " + username + " " + password);
-
         Config.getInstance().setUsername(username);
         Config.getInstance().setPassword(password);
         Config.getInstance().save();
+    }
+
+    public static void logout() {
+        Config.getInstance().resetCredentials();
+        switchToLoginScene();
     }
 
     public static boolean firstStartup() {

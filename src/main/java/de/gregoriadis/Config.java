@@ -9,12 +9,34 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Iterator;
 
 /**
  * Singleton for interactions with the configuration file, saving & serving persisted information
  */
 public class Config {
+
+    /**
+     * Enum declaring options for when an update for an existing file is available
+     *
+     * OVERWRITE - File will be downloaded and overwritten
+     * RENAME - File will be downloaded and saved with a naming suffix
+     * NOTIFY - User will only be notified about an update
+     */
+    public enum FileUpdateHandling {
+        OVERWRITE(0),
+        RENAME(1),
+        NOTIFY(2);
+
+        private final int radioIndex;
+
+        FileUpdateHandling(int radioIndex) {
+            this.radioIndex = radioIndex;
+        }
+
+        public int getRadioIndex() {
+            return this.radioIndex;
+        }
+    }
 
     /**
      * Singleton instance
@@ -36,6 +58,10 @@ public class Config {
      * HdM login password
      */
     private String password = "";
+    /**
+     * File update handling
+     */
+    private FileUpdateHandling fileUpdateHandling = FileUpdateHandling.OVERWRITE;
     /**
      * User specified path for synchronization
      */
@@ -74,6 +100,7 @@ public class Config {
             username = (String) jsonObject.get("username");
             password = (String) jsonObject.get("password");
             directory = (String) jsonObject.get("directory");
+            fileUpdateHandling = FileUpdateHandling.valueOf((String) jsonObject.get("fileUpdateHandling"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -115,6 +142,7 @@ public class Config {
         obj.put("username", username);
         obj.put("password", password);
         obj.put("directory", directory);
+        obj.put("fileUpdateHandling", fileUpdateHandling.name());
 
         return obj.toJSONString();
     }
@@ -166,6 +194,15 @@ public class Config {
      */
     public void setDirectory(String directory) {
         this.directory = directory;
+    }
+
+
+    public FileUpdateHandling getFileUpdateHandling() {
+        return fileUpdateHandling;
+    }
+
+    public void setFileUpdateHandling(FileUpdateHandling fileUpdateHandling) {
+        this.fileUpdateHandling = fileUpdateHandling;
     }
 
     /**

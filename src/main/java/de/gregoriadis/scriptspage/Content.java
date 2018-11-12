@@ -34,6 +34,10 @@ public abstract class Content {
      * Local path relative to sync directory to the file
      */
     private String localPath;
+    /**
+     * Was its file downloaded
+     */
+    private boolean downloaded = false;
 
 
     /**
@@ -116,19 +120,30 @@ public abstract class Content {
 
     /**
      * Downloads content into the specified directory
+     *
+     * @param overwrite Should file if existing be overwritten or renamed
      */
-    public void download() {
+    public void download(boolean overwrite) {
         Main.getLogger().info("Downloading from " + url);
         String location = Config.getInstance().getDirectory() + "/" + localPath;
+        if (overwrite) {
+
+        }
         try {
             System.out.println(Paths.get(location).getParent());
-            Path p = Paths.get(location);
-            p = p.getParent();
             Files.createDirectories(Paths.get(location).getParent());
             WebScraper.getInstance().download(url, location);
+            downloaded = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public boolean isDownloaded() {
+        return downloaded;
+    }
+
+    public void setDownloaded(boolean downloaded) {
+        this.downloaded = downloaded;
+    }
 }
