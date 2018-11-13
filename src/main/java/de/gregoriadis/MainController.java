@@ -3,6 +3,8 @@ package de.gregoriadis;
 import de.gregoriadis.Config.FileUpdateHandling;
 import de.gregoriadis.scriptspage.Content;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -59,6 +61,12 @@ public class MainController {
     @FXML
     private VBox settingsWrapperVBox;
 
+    @FXML
+    private ImageView settingsImageView;
+
+    @FXML
+    private CheckBox deepSyncCheckbox;
+
     private Thread syncThread;
 
     private SystemTray tray;
@@ -80,6 +88,11 @@ public class MainController {
             Config.getInstance().save();
         });
 
+        settingsImageView.setOnMouseClicked(t -> {
+            syncWrapperVBox.setVisible(false);
+            settingsWrapperVBox.setVisible(true);
+        });
+
         syncBtn.setOnMouseClicked(t -> initSyncing());
 
         int radioIndex = Config.getInstance().getFileUpdateHandling().getRadioIndex();
@@ -95,6 +108,12 @@ public class MainController {
                 Config.getInstance().setFileUpdateHandling(setting);
                 Config.getInstance().save();
             }
+        });
+
+        deepSyncCheckbox.setSelected(Config.getInstance().isDeepSync());
+        deepSyncCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            Config.getInstance().setDeepSync(newValue);
+            Config.getInstance().save();
         });
 
         logoutHBox.setOnMouseClicked(t -> Main.logout());

@@ -10,7 +10,6 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -53,7 +52,7 @@
                            </Insets>
                        </HBox.margin>
                   </Button>
-                  <ImageView fx:id="settingsBtn" fitHeight="28.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="settingsImageView" fitHeight="28.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../img/settings-icon.png" />
                      </image>
@@ -89,6 +88,7 @@
             <RadioButton mnemonicParsing="false" text="Datei wird automatisch heruntergeladen, beide Dateien werden behalten" toggleGroup="$fileUpdateHandling" />
             <RadioButton mnemonicParsing="false" text="Nur über Update informieren, Download soll manuell ausgeführt werden" toggleGroup="$fileUpdateHandling" />
             <CheckBox mnemonicParsing="false" text="ZIP-Archive automatisch entpacken und löschen" />
+            <CheckBox fx:id="deepSyncCheckbox" mnemonicParsing="false" text="DeepSync" />
          </children>
       </VBox>
       <HBox fx:id="logoutHBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="21.0" prefWidth="74.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">

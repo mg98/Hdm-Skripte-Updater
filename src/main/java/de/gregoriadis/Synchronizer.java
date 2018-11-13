@@ -69,11 +69,10 @@ public class Synchronizer {
 
             System.out.println(content.getUrl());
 
-            if (content.getClass() == Directory.class) {
+            if (Config.getInstance().isDeepSync() && content.getClass() == Directory.class) {
                 Directory dir = (Directory) content;
                 recursiveContents(dir.getContents());
-            } else {
-                if (content.locallyExists()) {
+            } else  if (content.locallyExists()) {
                     try {
                         // Get local updated at date in string
                         FileTime fileTime = Files.getLastModifiedTime(Paths.get(Config.getInstance().getSyncDirectory() + "/" + content.getLocalPath()));
@@ -81,15 +80,22 @@ public class Synchronizer {
                         long difference = content.getUpdatedAt().getMillis() - fileTime.toMillis();
                         System.out.println(content.getLocalPath() + " - " + difference);
                         if (difference > 60000) {
-                            // Download file
-                            Main.getLogger().info("Updating local file (old: " + fileTime.toString() + ", new: " + content.getUpdatedAt().toString() + ")");
-                            content.download(true);
-                            lastAdded.add(content);
+                            if (content.getClass() == File.class) {
+                                // Download file
+                                Main.getLogger().info("Updating local file (old: " + fileTime.toString() + ", new: " + content.getUpdatedAt().toString() + ")");
+                                content.download(true);
+                                lastAdded.add(content);
+                            } else {
+                                // Directory
+                                Directory dir = (Directory) content;
+                                recursiveContents(dir.getContents());
+                            }
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } else {
+            } else {
+                if (content.getClass() == File.class) {
                     // Download file
                     switch (mode) {
                         case OVERWRITE:
@@ -104,9 +110,13 @@ public class Synchronizer {
                             }
                             break;
                     }
-
                     lastAdded.add(content);
+                } else {
+                    // Directory
+                    Directory dir = (Directory) content;
+                    recursiveContents(dir.getContents());
                 }
+
             }
         }
     }

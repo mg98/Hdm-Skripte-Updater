@@ -1,5 +1,6 @@
 package de.gregoriadis;
 
+import org.apache.commons.io.FileUtils;
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -14,6 +15,14 @@ import java.nio.file.Paths;
  * Singleton for interactions with the configuration file, saving & serving persisted information
  */
 public class Config {
+
+    public boolean isDeepSync() {
+        return deepSync;
+    }
+
+    public void setDeepSync(boolean deepSync) {
+        this.deepSync = deepSync;
+    }
 
     /**
      * Enum declaring options for when an update for an existing file is available
@@ -66,6 +75,11 @@ public class Config {
      * User specified path for synchronization
      */
     private String syncDirectory = MainController.filesRootDirectory;
+    /**
+     * If active, ALL files will be checked for last modification date,
+     * even if the parent directory's modification date does not match
+     */
+    private boolean deepSync = false;
 
     /**
      * Setting up syncDirectory and config file
@@ -101,6 +115,7 @@ public class Config {
             password = (String) jsonObject.get("password");
             syncDirectory = (String) jsonObject.get("syncDirectory");
             fileUpdateHandling = FileUpdateHandling.valueOf((String) jsonObject.get("fileUpdateHandling"));
+            deepSync = (boolean) jsonObject.get("deepSync");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -143,6 +158,7 @@ public class Config {
         obj.put("password", password);
         obj.put("syncDirectory", syncDirectory);
         obj.put("fileUpdateHandling", fileUpdateHandling.name());
+        obj.put("deepSync", deepSync);
 
         return obj.toJSONString();
     }
@@ -220,6 +236,17 @@ public class Config {
     public static boolean fileExists() {
         File f = new File(configFile);
         return f.exists() && !f.isDirectory();
+    }
+
+    /**
+     * Deletes .hdmskripteupdater folder including all program files
+     */
+    public static void totalReset() {
+        try {
+            FileUtils.deleteDirectory(new File(fileDirectory));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
