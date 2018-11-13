@@ -8,7 +8,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import org.jsoup.HttpStatusException;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
+import java.io.IOException;
+import java.net.UnknownHostException;
 
 public class LoginController {
 
@@ -32,9 +37,30 @@ public class LoginController {
         loginBtn.setOnMouseClicked(t -> {
             Main.saveLogin(usernameTextField.getText(), passwordField.getText());
             // Test connection
-            Document doc = WebScraper.newInstance().getDocumentFromURL(Main.baseURL);
-            if (doc != null) {
-                Main.switchToMainScene();
+
+
+            try {
+                Document doc = WebScraper.newInstance().getDocumentFromURL(Main.baseURL);
+                if (doc != null) {
+                    // Login!
+                    Main.switchToMainScene();
+                }
+            }
+            catch (HttpStatusException e) {
+                switch (e.getStatusCode()) {
+                    case 401:
+                        setStatusMessage("Nutzername oder Passwort ist falsch.");
+                        break;
+                    default:
+                        setStatusMessage("HTTP " + e.getStatusCode());
+                }
+            }
+            catch (UnknownHostException e) {
+                setStatusMessage("Could not establish connection with hdm website. Check your internet connection!");
+            }
+            catch (IOException e) {
+                setStatusMessage("Dokument konnte nicht gefetcht werden.");
+                e.printStackTrace();
             }
         });
     }

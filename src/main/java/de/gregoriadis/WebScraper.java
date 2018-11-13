@@ -49,44 +49,29 @@ public class WebScraper {
         });
     }
 
+
     /**
      * Get document from url
      *
      * @param url
      * @return HTML document
+     * @throws HttpStatusException Response other than 200, most likely because authentifaction failed
+     * @throws UnknownHostException Hdm website not reachable or missing internet connection
+     * @throws IOException
      */
-    public Document getDocumentFromURL(String url) {
-        try {
-            if (cache.containsKey(url)) {
-                return cache.get(url);
-            }
-
-            Document document = Jsoup
-                    .connect(url)
-                    .header("Authorization", "Basic " + base64login)
-                    .get();
-            cache.put(url, document);
-
-            return document;
-        }
-        catch (HttpStatusException e) {
-            switch (e.getStatusCode()) {
-                case 401:
-                    Main.getLoginController().setStatusMessage("Nutzername oder Passwort ist falsch.");
-                    break;
-                default:
-                    Main.getLoginController().setStatusMessage("HTTP " + e.getStatusCode());
-            }
-        }
-        catch (UnknownHostException e) {
-            Main.getLoginController().setStatusMessage("Could not establish connection with hdm website. Check your internet connection!");
-        }
-        catch (IOException e) {
-            Main.getLoginController().setStatusMessage("Dokument konnte nicht gefetcht werden.");
-            e.printStackTrace();
+    public Document getDocumentFromURL(String url)
+            throws HttpStatusException, UnknownHostException, IOException {
+        if (cache.containsKey(url)) {
+            return cache.get(url);
         }
 
-        return null;
+        Document document = Jsoup
+                .connect(url)
+                .header("Authorization", "Basic " + base64login)
+                .get();
+        cache.put(url, document);
+
+        return document;
     }
 
     /**
