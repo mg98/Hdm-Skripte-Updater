@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,12 @@ public class IhreSkripte {
      * Creating an instance of this object will automatically fetch the data from the website
      */
     public IhreSkripte() {
-        Document document = WebScraper.getInstance().getDocumentFromURL(Main.baseURL);
+        Document document = null;
+        try {
+            document = WebScraper.getInstance().getDocumentFromURL(Main.baseURL);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Elements downloads = document.select(".content h2 a");
         Elements tables = selectTables(document);

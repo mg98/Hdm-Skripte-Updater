@@ -18,11 +18,7 @@
     -fx-padding: 5px;
 }
 
-#logoutHBox {
-    -fx-cursor: hand;
-}
-
-#settingsBtn {
+#logoutHBox, #settingsImageView {
     -fx-cursor: hand;
 }
 

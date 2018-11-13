@@ -241,7 +241,7 @@ public class Config {
     /**
      * Deletes .hdmskripteupdater folder including all program files
      */
-    public static void totalReset() {
+    public static void delete() {
         try {
             FileUtils.deleteDirectory(new File(fileDirectory));
         } catch (IOException e) {

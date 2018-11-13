@@ -33,14 +33,14 @@
             <Label prefHeight="64.0" prefWidth="599.0" text="Bitte wähle das Verzeichnis welches du mit den Skripten der HdM-Webseite synchronisieren möchtest." wrapText="true" />
             <HBox prefHeight="29.0" prefWidth="600.0">
                <children>
-                  <TextField fx:id="directoryTextField" prefHeight="27.0" prefWidth="474.0">
+                  <TextField fx:id="directoryTextField" prefHeight="27.0" prefWidth="457.0">
                    <HBox.margin>
                        <Insets>
                            <right>10</right>
                        </Insets>
                    </HBox.margin>
                   </TextField>
-                  <Button fx:id="chooseDirectoryBtn" mnemonicParsing="false" text="Durchsuchen..." />
+                  <Button fx:id="chooseDirectoryBtn" mnemonicParsing="false" prefHeight="27.0" prefWidth="111.0" text="Durchsuchen" />
                </children>
             </HBox>
             <HBox prefHeight="0.0" prefWidth="600.0">

@@ -31,38 +31,46 @@ public class LoginController {
 
     @FXML
     protected void initialize() {
+        login();
+
         usernameTextField.setText(Config.getInstance().getUsername());
         passwordField.setText(Config.getInstance().getPassword());
 
         loginBtn.setOnMouseClicked(t -> {
             Main.saveLogin(usernameTextField.getText(), passwordField.getText());
-            // Test connection
 
-
-            try {
-                Document doc = WebScraper.newInstance().getDocumentFromURL(Main.baseURL);
-                if (doc != null) {
-                    // Login!
-                    Main.switchToMainScene();
-                }
-            }
-            catch (HttpStatusException e) {
-                switch (e.getStatusCode()) {
-                    case 401:
-                        setStatusMessage("Nutzername oder Passwort ist falsch.");
-                        break;
-                    default:
-                        setStatusMessage("HTTP " + e.getStatusCode());
-                }
-            }
-            catch (UnknownHostException e) {
-                setStatusMessage("Could not establish connection with hdm website. Check your internet connection!");
-            }
-            catch (IOException e) {
-                setStatusMessage("Dokument konnte nicht gefetcht werden.");
-                e.printStackTrace();
+            if (usernameTextField.getText().equals("") || passwordField.getText().equals("")) {
+                setStatusMessage("Die Felder dürfen HdM-Kürzel und Passwort nicht leer sein.");
+            } else {
+                login();
             }
         });
+    }
+
+    protected void login() {
+        try {
+            Document doc = WebScraper.newInstance().getDocumentFromURL(Main.baseURL);
+            if (doc != null) {
+                // Login!
+                Main.switchToMainScene();
+            }
+        }
+        catch (HttpStatusException e) {
+            switch (e.getStatusCode()) {
+                case 401:
+                    setStatusMessage("Nutzername oder Passwort ist falsch.");
+                    break;
+                default:
+                    setStatusMessage("HTTP " + e.getStatusCode());
+            }
+        }
+        catch (UnknownHostException e) {
+            setStatusMessage("Could not establish connection with hdm website. Check your internet connection!");
+        }
+        catch (IOException e) {
+            setStatusMessage("Dokument konnte nicht gefetcht werden.");
+            e.printStackTrace();
+        }
     }
 
     protected void setStatusMessage(String text) {

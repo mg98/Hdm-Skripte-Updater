@@ -1,10 +1,13 @@
 package de.gregoriadis.scriptspage;
 
 import de.gregoriadis.WebScraper;
+import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +21,7 @@ public class Directory extends Content {
     /**
      * @return contents
      */
-    public List<Content> getContents() {
+    public List<Content> getContents() throws IOException {
         if (contents == null) {
             contents = new ArrayList<>();
             Document document = WebScraper.getInstance().getDocumentFromURL(getUrl());

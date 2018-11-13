@@ -2,13 +2,15 @@ package de.gregoriadis;
 
 import de.gregoriadis.scriptspage.*;
 import de.gregoriadis.Config.FileUpdateHandling;
-
-import java.io.IOException;
+import javafx.scene.control.Alert;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.jsoup.HttpStatusException;
+import java.io.IOException;
+import java.net.UnknownHostException;
 
 public class Synchronizer {
 
@@ -38,15 +40,30 @@ public class Synchronizer {
         lastAdded.clear();
         IhreSkripte scripts = new IhreSkripte();
         List<Course> courses = scripts.getCourses();
-        for (Course course : courses) {
-            Main.getLogger().info("Syncing course " + course.getName());
 
-            boolean a = false;
-            if (course.locallyExists()) {
-                recursiveContents(course.getContents());
-            } else {
-                course.download();
+        try {
+            for (Course course : courses) {
+                Main.getLogger().info("Syncing course " + course.getName());
+
+                if (course.locallyExists()) {
+                    recursiveContents(course.getContents());
+                } else {
+                    course.download();
+                }
             }
+        }
+        catch (UnknownHostException e) {
+            Main.getLogger().severe("Sync process cancelled because of lost internet connection.");
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Keine Internetverbindung");
+            alert.setContentText("Die Synchronisierung konnte nicht durchgeführt werden. Bitte überprüfe deine Internetverbindung und versuche es erneut.");
+            alert.show();
+
+            e.printStackTrace();
+        } catch (IOException e) {
+            Main.getLogger().severe("Sync process cancelled for unknown reason (IOException).");
+            e.printStackTrace();
         }
 
         Main.getLogger().info("Synchronizing done! " + lastAdded.size() + " items synced.");
@@ -64,7 +81,7 @@ public class Synchronizer {
      *
      * @param contents
      */
-    private void recursiveContents(List<Content> contents) {
+    private void recursiveContents(List<Content> contents) throws IOException {
         for (Content content : contents) {
 
             System.out.println(content.getUrl());

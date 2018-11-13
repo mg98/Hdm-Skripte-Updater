@@ -29,7 +29,7 @@
             <Image url="@../img/hdm_logo.png" />
          </image>
       </ImageView>
-      <VBox prefHeight="160.0" prefWidth="303.0" GridPane.rowIndex="1">
+      <VBox prefHeight="183.0" prefWidth="303.0" GridPane.rowIndex="1">
          <children>
             <HBox fx:id="loginFormHBox" prefHeight="35.0" prefWidth="200.0">
                <children>
@@ -52,7 +52,7 @@
                   <Button fx:id="loginBtn" layoutX="223.0" layoutY="6.0" mnemonicParsing="false" text="Anmelden" />
                </children>
             </Pane>
-            <Label fx:id="status" prefHeight="44.0" prefWidth="303.0">
+            <Label fx:id="status" prefHeight="75.0" prefWidth="303.0" wrapText="true">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin></Label>

@@ -47,18 +47,6 @@ public class Main extends Application {
 
         switchToLoginScene();
 
-        if (!Config.getInstance().getUsername().equals("")) {
-            // Try to login
-            Document doc = WebScraper.getInstance().getDocumentFromURL(Main.baseURL);
-            if (doc == null) {
-                LOGGER.info("Could not login with configured credentials");
-            } else {
-                // Successful login
-                LOGGER.info("Config successfull");
-                switchToMainScene();
-            }
-        }
-
         primaryStage.show();
     }
 
