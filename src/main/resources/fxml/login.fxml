@@ -24,7 +24,12 @@
       <RowConstraints />
    </rowConstraints>
    <children>
-      <VBox prefHeight="137.0" prefWidth="303.0" GridPane.rowIndex="1">
+      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER">
+         <image>
+            <Image url="@../img/hdm_logo.png" />
+         </image>
+      </ImageView>
+      <VBox prefHeight="160.0" prefWidth="303.0" GridPane.rowIndex="1">
          <children>
             <HBox fx:id="loginFormHBox" prefHeight="35.0" prefWidth="200.0">
                <children>
@@ -47,16 +52,14 @@
                   <Button fx:id="loginBtn" layoutX="223.0" layoutY="6.0" mnemonicParsing="false" text="Anmelden" />
                </children>
             </Pane>
-            <Label fx:id="status" />
+            <Label fx:id="status" prefHeight="44.0" prefWidth="303.0">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin></Label>
          </children>
          <padding>
             <Insets top="20.0" />
          </padding>
       </VBox>
-      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER">
-         <image>
-            <Image url="@../img/hdm_logo.png" />
-         </image>
-      </ImageView>
    </children>
 </GridPane>

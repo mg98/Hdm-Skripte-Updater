@@ -32,8 +32,7 @@ public class LoginController {
         loginBtn.setOnMouseClicked(t -> {
             Main.saveLogin(usernameTextField.getText(), passwordField.getText());
             // Test connection
-            WebScraper.getInstance().clearCache();
-            Document doc = WebScraper.getInstance().getDocumentFromURL(Main.baseURL);
+            Document doc = WebScraper.newInstance().getDocumentFromURL(Main.baseURL);
             if (doc != null) {
                 Main.switchToMainScene();
             }

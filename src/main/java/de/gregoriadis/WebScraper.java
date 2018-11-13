@@ -122,4 +122,12 @@ public class WebScraper {
         return instance;
     }
 
+    /**
+     * @return Creates and returns new instance
+     */
+    public static WebScraper newInstance() {
+        instance = new WebScraper();
+        return instance;
+    }
+
 }
