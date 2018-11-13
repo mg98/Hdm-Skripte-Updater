@@ -34,7 +34,13 @@
             <Label prefHeight="64.0" prefWidth="599.0" text="Bitte wähle das Verzeichnis welches du mit den Skripten der HdM-Webseite synchronisieren möchtest." wrapText="true" />
             <HBox prefHeight="29.0" prefWidth="600.0">
                <children>
-                  <TextField fx:id="directoryTextField" prefHeight="27.0" prefWidth="423.0" />
+                  <TextField fx:id="directoryTextField" prefHeight="27.0" prefWidth="474.0">
+                   <HBox.margin>
+                       <Insets>
+                           <right>10</right>
+                       </Insets>
+                   </HBox.margin>
+                  </TextField>
                   <Button fx:id="chooseDirectoryBtn" mnemonicParsing="false" text="Durchsuchen..." />
                </children>
             </HBox>
@@ -63,11 +69,7 @@
          <children>
             <ScrollPane fx:id="filesScrollPane" prefHeight="177.0" prefWidth="600.0">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="176.0" prefWidth="595.0">
-                     <children>
-                        <VBox fx:id="filesVBox" />
-                     </children>
-                  </AnchorPane>
+                    <VBox fx:id="filesVBox" />
               </content>
             </ScrollPane>
             <Label fx:id="statusLabel" prefHeight="36.0" prefWidth="600.0" />

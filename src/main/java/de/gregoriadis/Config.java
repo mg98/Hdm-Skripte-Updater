@@ -43,7 +43,7 @@ public class Config {
      */
     private static Config instance;
     /**
-     * Hidden directory on user's machine to persist data
+     * Hidden syncDirectory on user's machine to persist data
      */
     private final static String fileDirectory = System.getProperty("user.home") + "/.hdmskripteupdater";
     /**
@@ -65,14 +65,14 @@ public class Config {
     /**
      * User specified path for synchronization
      */
-    private String directory = MainController.filesRootDirectory;
+    private String syncDirectory = MainController.filesRootDirectory;
 
     /**
-     * Setting up directory and config file
+     * Setting up syncDirectory and config file
      */
     private Config() {
         try {
-            // Create working directory to store config and temp files
+            // Create working syncDirectory to store config and temp files
             Files.createDirectories(Paths.get(fileDirectory + "/tmp"));
 
             // Create config json
@@ -99,7 +99,7 @@ public class Config {
 
             username = (String) jsonObject.get("username");
             password = (String) jsonObject.get("password");
-            directory = (String) jsonObject.get("directory");
+            syncDirectory = (String) jsonObject.get("syncDirectory");
             fileUpdateHandling = FileUpdateHandling.valueOf((String) jsonObject.get("fileUpdateHandling"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -141,7 +141,7 @@ public class Config {
         JSONObject obj = new JSONObject();
         obj.put("username", username);
         obj.put("password", password);
-        obj.put("directory", directory);
+        obj.put("syncDirectory", syncDirectory);
         obj.put("fileUpdateHandling", fileUpdateHandling.name());
 
         return obj.toJSONString();
@@ -176,24 +176,24 @@ public class Config {
     }
 
     /**
-     * @return directory
+     * @return syncDirectory
      */
-    public String getDirectory() {
-        return directory;
+    public String getSyncDirectory() {
+        return syncDirectory;
     }
 
     /**
-     * @return file directory
+     * @return file syncDirectory
      */
     public static String getFileDirectory() {
         return fileDirectory;
     }
 
     /**
-     * @param directory
+     * @param syncDirectory
      */
-    public void setDirectory(String directory) {
-        this.directory = directory;
+    public void setSyncDirectory(String syncDirectory) {
+        this.syncDirectory = syncDirectory;
     }
 
 

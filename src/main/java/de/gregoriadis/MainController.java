@@ -1,14 +1,8 @@
 package de.gregoriadis;
 
-import de.gregoriadis.Config;
-import de.gregoriadis.INsUserNotificationsBridge;
-import de.gregoriadis.Main;
-import de.gregoriadis.Synchronizer;
 import de.gregoriadis.Config.FileUpdateHandling;
 import de.gregoriadis.scriptspage.Content;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -17,10 +11,8 @@ import java.awt.MenuItem;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
-import org.controlsfx.control.Notifications;
 
 import javafx.scene.image.Image;
 
@@ -30,8 +22,6 @@ import java.awt.TrayIcon;
 import java.awt.PopupMenu;
 import java.awt.Toolkit;
 import java.awt.AWTException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -77,15 +67,16 @@ public class MainController {
     protected void initialize() {
         setupToolbar();
 
-        directoryTextField.setText(Config.getInstance().getDirectory());
+        directoryTextField.setText(Config.getInstance().getSyncDirectory());
         chooseDirectoryBtn.setOnMouseClicked(t -> {
             DirectoryChooser chooser = new DirectoryChooser();
-            File defaultDirectory = new File(Config.getInstance().getDirectory());
+            File defaultDirectory = new File(
+                    Config.getInstance().getSyncDirectory());
             chooser.setInitialDirectory(defaultDirectory);
             File selectedDirectory = chooser.showDialog(Main.getPrimaryStage());
             directoryTextField.setText(selectedDirectory.getAbsolutePath());
 
-            Config.getInstance().setDirectory(selectedDirectory.getAbsolutePath());
+            Config.getInstance().setSyncDirectory(selectedDirectory.getAbsolutePath());
             Config.getInstance().save();
         });
 

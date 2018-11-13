@@ -2,15 +2,11 @@ package de.gregoriadis;
 
 import de.gregoriadis.scriptspage.*;
 import de.gregoriadis.Config.FileUpdateHandling;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +41,7 @@ public class Synchronizer {
         for (Course course : courses) {
             Main.getLogger().info("Syncing course " + course.getName());
 
+            boolean a = false;
             if (course.locallyExists()) {
                 recursiveContents(course.getContents());
             } else {
@@ -71,33 +68,28 @@ public class Synchronizer {
         for (Content content : contents) {
 
             System.out.println(content.getUrl());
-            if (content.locallyExists()) {
+
+            if (content.getClass() == Directory.class) {
+                Directory dir = (Directory) content;
+                recursiveContents(dir.getContents());
+            } else {
                 if (content.locallyExists()) {
                     try {
                         // Get local updated at date in string
-                        FileTime fileTime = Files.getLastModifiedTime(Paths.get(Config.getInstance().getDirectory() + "/" + content.getLocalPath()));
+                        FileTime fileTime = Files.getLastModifiedTime(Paths.get(Config.getInstance().getSyncDirectory() + "/" + content.getLocalPath()));
 
                         long difference = content.getUpdatedAt().getMillis() - fileTime.toMillis();
-
+                        System.out.println(content.getLocalPath() + " - " + difference);
                         if (difference > 60000) {
-                            if (content.getClass() == File.class) {
-                                // Download file
-                                Main.getLogger().info("Updating local file (old: " + fileTime.toString() + ", new: " + content.getUpdatedAt().toString() + ")");
-                                content.download(true);
-                                lastAdded.add(content);
-                            } else {
-                                // Directory
-                                Directory dir = (Directory) content;
-                                recursiveContents(dir.getContents());
-                            }
+                            // Download file
+                            Main.getLogger().info("Updating local file (old: " + fileTime.toString() + ", new: " + content.getUpdatedAt().toString() + ")");
+                            content.download(true);
+                            lastAdded.add(content);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }
-
-            } else {
-                if (content.getClass() == File.class) {
+                } else {
                     // Download file
                     switch (mode) {
                         case OVERWRITE:
@@ -114,12 +106,7 @@ public class Synchronizer {
                     }
 
                     lastAdded.add(content);
-                } else {
-                    // Directory
-                    Directory dir = (Directory) content;
-                    recursiveContents(dir.getContents());
                 }
-
             }
         }
     }

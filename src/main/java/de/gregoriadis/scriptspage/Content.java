@@ -2,14 +2,12 @@ package de.gregoriadis.scriptspage;
 
 import de.gregoriadis.Config;
 import de.gregoriadis.Main;
-import de.gregoriadis.Synchronizer;
 import de.gregoriadis.WebScraper;
 import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -35,7 +33,7 @@ public abstract class Content {
      */
     private String localPath;
     /**
-     * Was its file downloaded
+     * File was downloaded
      */
     private boolean downloaded = false;
 
@@ -99,7 +97,7 @@ public abstract class Content {
      * @return file object of local file
      */
     public File getLocalFile() {
-        return new java.io.File(Config.getInstance().getDirectory() + "/" + localPath);
+        return new java.io.File(Config.getInstance().getSyncDirectory() + "/" + localPath);
     }
 
     /**
@@ -115,7 +113,7 @@ public abstract class Content {
      * @return If file locally exists
      */
     public boolean locallyExists() {
-        return Files.exists(Paths.get(Config.getInstance().getDirectory() + "/" + localPath));
+        return Files.exists(Paths.get(Config.getInstance().getSyncDirectory() + "/" + localPath));
     }
 
     /**
@@ -125,9 +123,25 @@ public abstract class Content {
      */
     public void download(boolean overwrite) {
         Main.getLogger().info("Downloading from " + url);
-        String location = Config.getInstance().getDirectory() + "/" + localPath;
-        if (overwrite) {
+        String location = Config.getInstance().getSyncDirectory() + "/" + localPath;
+        if (overwrite && locallyExists()) {
+            String path = getLocalPath();
+            /**
+             * @var Absolute file path splitted into base and file extension
+             */
+            String[] splittedPath = path.split("\\.(?=[^\\.]+$)");
 
+            String newPath = splittedPath[0] + " (Update)." + splittedPath[1];
+
+            int i = 2;
+            while (true) {
+                if (Files.exists(Paths.get(Config.getInstance().getSyncDirectory() + "/" + newPath))) {
+                    newPath = splittedPath[0] + " (Update " + i + ")." + splittedPath[1];
+                    i++;
+                } else break;
+            }
+
+            location = newPath;
         }
         try {
             System.out.println(Paths.get(location).getParent());

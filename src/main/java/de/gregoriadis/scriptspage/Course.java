@@ -101,7 +101,7 @@ public class Course {
         Main.getLogger().info("Extracting file to set destination");
         try {
             ZipFile zipFile = new ZipFile(tempZipFile);
-            zipFile.extractAll(Config.getInstance().getDirectory() + "/" + name);
+            zipFile.extractAll(Config.getInstance().getSyncDirectory() + "/" + name);
         } catch (ZipException e) {
             e.printStackTrace();
         }
@@ -115,6 +115,6 @@ public class Course {
      * @return If course directory locally exists
      */
     public boolean locallyExists() {
-        return Files.exists(Paths.get(Config.getInstance().getDirectory() + "/" + name));
+        return Files.exists(Paths.get(Config.getInstance().getSyncDirectory() + "/" + name));
     }
 }
