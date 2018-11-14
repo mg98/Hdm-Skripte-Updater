@@ -27,11 +27,6 @@ public class WebScraper {
      * Variable needed for HTTP authentification
      */
     private String base64login;
-    /**
-     * Caches documents
-     * TODO: Why do we have this?? Why do we do this?
-     */
-    private HashMap<String, Document> cache = new HashMap<>();
 
 
     /**
@@ -59,19 +54,11 @@ public class WebScraper {
      * @throws UnknownHostException Hdm website not reachable or missing internet connection
      * @throws IOException
      */
-    public Document getDocumentFromURL(String url)
-            throws HttpStatusException, UnknownHostException, IOException {
-        if (cache.containsKey(url)) {
-            return cache.get(url);
-        }
-
-        Document document = Jsoup
+    public Document getDocumentFromURL(String url) throws HttpStatusException, UnknownHostException, IOException {
+        return Jsoup
                 .connect(url)
                 .header("Authorization", "Basic " + base64login)
                 .get();
-        cache.put(url, document);
-
-        return document;
     }
 
     /**
@@ -89,13 +76,6 @@ public class WebScraper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Clears the cache
-     */
-    public void clearCache() {
-        cache.clear();
     }
 
     /**

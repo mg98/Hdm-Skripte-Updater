@@ -47,7 +47,7 @@
                   </VBox>
                </children>
             </HBox>
-            <Pane prefHeight="33.0" prefWidth="303.0" style="-fx-allignment: right;">
+            <Pane prefHeight="33.0" prefWidth="303.0">
                <children>
                   <Button fx:id="loginBtn" layoutX="223.0" layoutY="6.0" mnemonicParsing="false" text="Anmelden" />
                </children>

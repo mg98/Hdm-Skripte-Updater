@@ -31,10 +31,15 @@ public class LoginController {
 
     @FXML
     protected void initialize() {
-        login();
+        String username = Config.getInstance().getUsername();
+        String password = Config.getInstance().getPassword();
 
-        usernameTextField.setText(Config.getInstance().getUsername());
-        passwordField.setText(Config.getInstance().getPassword());
+        if (!username.equals("") && !password.equals("")) {
+            login();
+        }
+
+        usernameTextField.setText(username);
+        passwordField.setText(password);
 
         loginBtn.setOnMouseClicked(t -> {
             Main.saveLogin(usernameTextField.getText(), passwordField.getText());
@@ -49,11 +54,9 @@ public class LoginController {
 
     protected void login() {
         try {
-            Document doc = WebScraper.newInstance().getDocumentFromURL(Main.baseURL);
-            if (doc != null) {
-                // Login!
-                Main.switchToMainScene();
-            }
+            WebScraper.newInstance().getDocumentFromURL(Main.baseURL);
+            // Login!
+            Main.switchToMainScene();
         }
         catch (HttpStatusException e) {
             switch (e.getStatusCode()) {

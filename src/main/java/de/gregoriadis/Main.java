@@ -47,6 +47,10 @@ public class Main extends Application {
 
         switchToLoginScene();
 
+        if (!Config.getInstance().getUsername().equals("") && !Config.getInstance().getPassword().equals("")) {
+            loginController.login();
+        }
+
         primaryStage.show();
     }
 
@@ -55,6 +59,10 @@ public class Main extends Application {
     }
 
     public static void switchToLoginScene() {
+        primaryStage.setScene(loginScene);
+    }
+
+    public static void switchToLoginSceneAndInitialize() {
         loginController.initialize();
         primaryStage.setScene(loginScene);
     }
@@ -71,7 +79,7 @@ public class Main extends Application {
 
     public static void logout() {
         Config.getInstance().resetCredentials();
-        switchToLoginScene();
+        switchToLoginSceneAndInitialize();
     }
 
     public static boolean firstStartup() {
