@@ -5,9 +5,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.jsoup.nodes.Document;
 
+import java.io.FileInputStream;
 import java.util.logging.Logger;
 
 public class Main extends Application {
@@ -19,6 +22,7 @@ public class Main extends Application {
     private static Stage primaryStage;
     private static Scene loginScene;
     private static Scene mainScene;
+    private static Scene loadingScene;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -45,10 +49,20 @@ public class Main extends Application {
         mainScene = new Scene(mainRoot);
         mainScene.getStylesheets().add("/css/gui.css");
 
+        // Setup loading scene
+        StackPane loadingPane = new StackPane();
+        Image loadingImage = new Image(new FileInputStream("src/main/resources/img/loading.gif"));
+        ImageView loadingImageView = new ImageView(loadingImage);
+        loadingImageView.setFitHeight(150);
+        loadingImageView.setFitWidth(150);
+        loadingPane.getChildren().add(loadingImageView);
+        loadingScene = new Scene(loadingPane, 600, 400);
+
+
         switchToLoginScene();
 
         if (!Config.getInstance().getUsername().equals("") && !Config.getInstance().getPassword().equals("")) {
-            loginController.login();
+            //loginController.login();
         }
 
         primaryStage.show();
@@ -65,6 +79,10 @@ public class Main extends Application {
     public static void switchToLoginSceneAndInitialize() {
         loginController.initialize();
         primaryStage.setScene(loginScene);
+    }
+
+    public static void switchToLoadingScene() {
+        primaryStage.setScene(loadingScene);
     }
 
     public static void main(String[] args) {

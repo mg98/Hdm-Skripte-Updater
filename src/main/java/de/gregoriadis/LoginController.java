@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -47,16 +48,19 @@ public class LoginController {
             if (usernameTextField.getText().equals("") || passwordField.getText().equals("")) {
                 setStatusMessage("Die Felder dürfen HdM-Kürzel und Passwort nicht leer sein.");
             } else {
+                Main.switchToLoadingScene();
                 login();
             }
         });
     }
 
     protected void login() {
+        Main.switchToLoadingScene();
         try {
             WebScraper.newInstance().getDocumentFromURL(Main.baseURL);
             // Login!
             Main.switchToMainScene();
+            return;
         }
         catch (HttpStatusException e) {
             switch (e.getStatusCode()) {
@@ -74,6 +78,8 @@ public class LoginController {
             setStatusMessage("Dokument konnte nicht gefetcht werden.");
             e.printStackTrace();
         }
+
+        Main.switchToLoginScene();
     }
 
     protected void setStatusMessage(String text) {
