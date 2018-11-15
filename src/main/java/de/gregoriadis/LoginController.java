@@ -3,16 +3,23 @@ package de.gregoriadis;
 import de.gregoriadis.Config;
 import de.gregoriadis.Main;
 import de.gregoriadis.WebScraper;
+import de.gregoriadis.scriptspage.Content;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
@@ -35,10 +42,6 @@ public class LoginController {
         String username = Config.getInstance().getUsername();
         String password = Config.getInstance().getPassword();
 
-        if (!username.equals("") && !password.equals("")) {
-            login();
-        }
-
         usernameTextField.setText(username);
         passwordField.setText(password);
 
@@ -48,7 +51,6 @@ public class LoginController {
             if (usernameTextField.getText().equals("") || passwordField.getText().equals("")) {
                 setStatusMessage("Die Felder dürfen HdM-Kürzel und Passwort nicht leer sein.");
             } else {
-                Main.switchToLoadingScene();
                 login();
             }
         });
@@ -56,30 +58,49 @@ public class LoginController {
 
     protected void login() {
         Main.switchToLoadingScene();
-        try {
-            WebScraper.newInstance().getDocumentFromURL(Main.baseURL);
-            // Login!
-            Main.switchToMainScene();
-            return;
-        }
-        catch (HttpStatusException e) {
-            switch (e.getStatusCode()) {
-                case 401:
-                    setStatusMessage("Nutzername oder Passwort ist falsch.");
-                    break;
-                default:
-                    setStatusMessage("HTTP " + e.getStatusCode());
-            }
-        }
-        catch (UnknownHostException e) {
-            setStatusMessage("Could not establish connection with hdm website. Check your internet connection!");
-        }
-        catch (IOException e) {
-            setStatusMessage("Dokument konnte nicht gefetcht werden.");
-            e.printStackTrace();
-        }
 
-        Main.switchToLoginScene();
+        new Thread(new Task<Void>() {
+
+            @Override
+            protected Void call() {
+                try {
+                    WebScraper.newInstance().getDocumentFromURL(Main.baseURL);
+                    return null;
+                }
+                catch (HttpStatusException e) {
+                    switch (e.getStatusCode()) {
+                        case 401:
+                            setStatusMessage("Nutzername oder Passwort ist falsch.");
+                            break;
+                        default:
+                            setStatusMessage("HTTP " + e.getStatusCode());
+                    }
+                }
+                catch (UnknownHostException e) {
+                    setStatusMessage("Could not establish connection with hdm website. Check your internet connection!");
+                }
+                catch (IOException e) {
+                    setStatusMessage("Dokument konnte nicht gefetcht werden.");
+                    e.printStackTrace();
+                }
+
+                Platform.runLater(() -> Main.switchToLoginScene());
+
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                Platform.runLater(() -> Main.switchToMainScene());
+            }
+
+            @Override
+            protected void failed() {
+                super.failed();
+                Platform.runLater(() -> Main.switchToLoginScene());
+            }
+
+        }).start();
     }
 
     protected void setStatusMessage(String text) {

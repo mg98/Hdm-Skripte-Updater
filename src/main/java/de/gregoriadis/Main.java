@@ -35,6 +35,15 @@ public class Main extends Application {
         Image applicationIcon = new Image(getClass().getResourceAsStream("/img/favicon.png"));
         primaryStage.getIcons().add(applicationIcon);
 
+        // Setup loading scene
+        StackPane loadingPane = new StackPane();
+        Image loadingImage = new Image(new FileInputStream("src/main/resources/img/loading.gif"));
+        ImageView loadingImageView = new ImageView(loadingImage);
+        loadingImageView.setFitHeight(150);
+        loadingImageView.setFitWidth(150);
+        loadingPane.getChildren().add(loadingImageView);
+        loadingScene = new Scene(loadingPane, 600, 400);
+
         // Setup login scene
         FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
         Parent loginRoot = loginLoader.load();
@@ -49,20 +58,10 @@ public class Main extends Application {
         mainScene = new Scene(mainRoot);
         mainScene.getStylesheets().add("/css/gui.css");
 
-        // Setup loading scene
-        StackPane loadingPane = new StackPane();
-        Image loadingImage = new Image(new FileInputStream("src/main/resources/img/loading.gif"));
-        ImageView loadingImageView = new ImageView(loadingImage);
-        loadingImageView.setFitHeight(150);
-        loadingImageView.setFitWidth(150);
-        loadingPane.getChildren().add(loadingImageView);
-        loadingScene = new Scene(loadingPane, 600, 400);
-
-
         switchToLoginScene();
 
         if (!Config.getInstance().getUsername().equals("") && !Config.getInstance().getPassword().equals("")) {
-            //loginController.login();
+            loginController.login();
         }
 
         primaryStage.show();
